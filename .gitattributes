@@ -1,2 +1,2 @@
 # Declare files that will always have CRLF line endings on checkout.
-*.m text eol=crlf
+*.* text eol=crlf
