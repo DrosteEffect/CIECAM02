@@ -19,7 +19,7 @@ https://www.mathworks.com/matlabcentral/fileexchange/62729-matplotlib-2-0-colorm
 My goal was to provide functionality as simple as the commonly used Lab
 colorspace conversions, whilst providing a much more perceptually uniform
 colorspace. Note that I replaced calculations with a matrix inverse, e.g.
-inv(A)*b, with the recommended and numerically more precise A\b. See:
+inv(A) * b, with the recommended and numerically more precise A \ b. See:
 
 https://www.mathworks.com/help/matlab/ref/inv.html
 
@@ -68,4 +68,4 @@ File and Function Names
 Yes, I am well aware that the function names do not follow the common
 MATLAB practice: case sensitivity is required because the two
 characters "h" and "H" have distinct meanings, and the underscore
-helps to distinguish the digits in the case "ceicam02_2_XYZ".
+helps to distinguish the digits in the case "ciecam02_2_XYZ".
