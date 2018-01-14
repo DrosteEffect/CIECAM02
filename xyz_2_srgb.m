@@ -16,10 +16,12 @@ function rgb = xyz_2_srgb(xyz)
 %% Input And Output Arguments %%
 %
 %%% Input
-% xyz = NumericArray, tristimulus values to convert, 1931 XYZ colorspace (Ymax==1).
+% xyz = NumericArray, tristimulus values to convert, scaled 1931 XYZ colorspace (Ymax==1).
+%       Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values.
 %
 %%% Output
-% rgb = NumericArray, same size as <xyz>, the sRGB values, scaled from 0 to 1.
+% rgb = NumericArray, the sRGB values, scaled from 0 to 1.
+%       Same size as <xyz>, the last dimension encodes the R,G,B values.
 %
 % rgb = xyz_2_srgb(xyz)
 
@@ -31,7 +33,10 @@ xyz = reshape(xyz,[],3);
 %
 %% XYZ2RGB %%
 %
-M = [3.2406,-1.5372,-0.4986;-0.9689,1.8758,0.0415;0.0557,-0.2040,1.0570];
+M = [...
+	+3.2406255,-1.5372080,-0.4986286;...
+	-0.9689307,+1.8757561,+0.0415175;...
+	+0.0557101,-0.2040211,+1.0569959];
 rgb = max(0,min(1, locGammaCor(xyz * M.')));
 % Remember to include my license when copying my implementation.
 rgb = reshape(rgb,isz);
@@ -39,7 +44,7 @@ rgb = reshape(rgb,isz);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%xyz_2_srgb
 function rgb = locGammaCor(rgb)
-% Gamma correction of RGB data.
+% Gamma correction of sRGB data.
 idx = rgb <= 0.0031308;
 rgb(idx) = 12.92 * rgb(idx);
 rgb(~idx) = real(1.055 * rgb(~idx).^(1/2.4) - 0.055);

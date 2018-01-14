@@ -20,13 +20,14 @@ function JQCMsHh = XYZ_2_ciecam02(XYZ,S,isn)
 %% Input And Output Arguments %%
 %
 %%% Inputs (*==default):
-% XYZ = NumericArray, tristimulus values to convert, in 1931 XYZ colorspace (Ymax==100).
-% S   = Structure of parameters from CIECAM02_PARAMETERS.
+% XYZ = NumericArray, tristimulus values to convert, 1931 XYZ colorspace (Ymax==100).
+%       Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values.
+% S   = Scalar structure of parameters from CIECAM02_PARAMETERS.
 % isn = *true/false -> negative A values are converted to NaNs/zeros.
 %
 %%% Outputs:
-% JQCMsHh = CIECAM02 values. The first dimensions are the same size as XYZ,
-%           the last dimension has size 7 and is [J,Q,C,M,s,H,h], where:
+% JQCMsHh = CIECAM02 values calculated from <XYZ> and the input parameters.
+%           Size Nx7 or RxCx7, the last dimension encodes [J,Q,C,M,s,H,h], where:
 %           J = Lightness
 %           Q = Brightness
 %           C = Chroma

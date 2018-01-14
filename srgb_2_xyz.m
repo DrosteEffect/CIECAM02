@@ -16,10 +16,12 @@ function xyz = srgb_2_xyz(rgb)
 %% Input And Output Arguments %%
 %
 %%% Input:
-% rgb = NumericArray, the sRGB values to convert, scaled from 0 to 1.
+% rgb = NumericArray, the sRGB values to convert, scaled so that 0<=rgb<=1.
+%       Size Nx3 or RxCx3, the last dimension encodes the R,G,B values.
 %
 %%% Output:
-% xyz = NumericArray, same size as <rgb>, tristimulus values, 1931 XYZ colorspace (Ymax==1).
+% xyz = NumericArray, tristimulus values, scaled 1931 XYZ colorspace (Ymax==1).
+%       The same size as <rgb>, the last dimension encodes the X,Y,Z values.
 %
 % xyz = srgb_2_xyz(rgb)
 
@@ -32,8 +34,11 @@ rgb = reshape(rgb,[],3);
 %
 %% RGB2XYZ %%
 %
-M = [3.2406,-1.5372,-0.4986;-0.9689,1.8758,0.0415;0.0557,-0.2040,1.0570];
-xyz = (M \ locGammaInv(rgb.')).';
+M = [...
+	+3.2406255,-1.5372080,-0.4986286;...
+	-0.9689307,+1.8757561,+0.0415175;...
+	+0.0557101,-0.2040211,+1.0569959];
+xyz = locGammaInv(rgb) / M.';
 % Remember to include my license when copying my implementation.
 xyz = reshape(xyz,isz);
 %
@@ -41,11 +46,9 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%srgb_2_xyz
 function rgb = locGammaInv(rgb)
 % Inverse gamma transform of sRGB data.
-%
 idx = rgb <= 0.04045;
 rgb(idx) = rgb(idx) / 12.92;
 rgb(~idx) = real(((rgb(~idx) + 0.055) / 1.055).^2.4);
-%
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%locGammaInv
 %

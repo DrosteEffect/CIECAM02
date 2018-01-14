@@ -17,12 +17,16 @@ function Jab = srgb_2_Jab(rgb,varargin)
 %% Input and Output Arguments %%
 %
 %%% Inputs (*==default):
-% rgb   = Nx3 or RxCx3 numeric array of RGB values, 0<=rgb<=1.
-% space = 1xN char, *'UCS'/'LCD'/'SCD': to select a standard CAM02 space:
+% rgb   = NumericArray of RGB values, scaled so that 0<=rgb<=1.
+%         Size Nx3 or RxCx3, the last dimension encodes the R,G,B values.
+% space = CharRowVector, *'UCS'/'LCD'/'SCD' selects a standard CAM02 space:
 %         UniformColorSpace / LargeColorDifference / SmallColorDifference.
 %
 %%% Outputs:
-% Jab = numeric array of CAM02 J'a'b' colorspace values, same size as input <rgb>.
+% Jab = NumericArray of CAM02 J'a'b' colorspace values.
+%       The same size as <rgb>, the last dimension encodes the J',a',b' values.
+%
+% Jab = srgb_2_Jab(rgb,*space)
 
 %% Input Wrangling %%
 %

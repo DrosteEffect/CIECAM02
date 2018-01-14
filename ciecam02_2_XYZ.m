@@ -19,10 +19,11 @@ function XYZ = ciecam02_2_XYZ(arr,S,hdr)
 %% Input And Output Arguments %%
 %
 %%% Inputs:
-% arr = NumericArray, size Nx3 or RxCx3, the last dimension encodes the
-%       CIECAM02 values [J|Q,C|M|s,H|h]. See input <hdr> for more info.
-% S   = structure of parameters from CIECAM02_PARAMETERS.
-% hdr = 1x3 char, to specify the last dimension of <arr>, e.g. 'JMh', where:
+% arr = NumericArray, the CIECAM02 values [J|Q,C|M|s,H|h].
+%       Size Nx3 or RxCx3, the last dimension encodes the J/Q,C/M/s,H/h values.
+%       The value sequence must be specified using the third input <hdr>.
+% S   = Scalar structure of parameters from CIECAM02_PARAMETERS.
+% hdr = CharRowVector, specify the last dimension of <arr>, e.g. 'JMh', where:
 %           J = Lightness
 %           Q = Brightness
 %           C = Chroma
@@ -33,6 +34,7 @@ function XYZ = ciecam02_2_XYZ(arr,S,hdr)
 %
 %%% Outputs:
 % XYZ = NumericArray, tristimulus values, in 1931 XYZ colorspace (Ymax==100).
+%       The same size as <arr>, the last dimension encodes the X,Y,Z values.
 %
 % XYZ = ciecam02_2_XYZ(arr,S,hdr)
 

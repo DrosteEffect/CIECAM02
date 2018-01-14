@@ -9,11 +9,13 @@ function JMh = Jab_2_JMh(Jab,S)
 %% Input and Output Arguments %%
 %
 %%% Inputs:
-% Jab = Nx3 or RxCx3 numeric arraz, J'a'b' colorspace values [J,a,b].
-% S   = structure of parameters from the function JAB_PARAMETERS.
+% Jab = NumericArray, perceptually uniform colorspace values J',a',b'.
+%       Size Nx3 or RxCx3, the last dimension encodes the J'a'b' values.
+% S   = Scalar structure of parameters from the function JAB_PARAMETERS.
 %
 %%% Outputs:
-% JMh = numeric array of CIECAM02 lightness, colorfulness, and hue angle values.
+% JMh = NumericArray of CIECAM02 lightness, colorfulness, and hue angle values.
+%       The same size as <Jab>, the last dimension encodes the J,M,h values.
 %
 % JMh = Jab_2_JMh(Jab,S)
 

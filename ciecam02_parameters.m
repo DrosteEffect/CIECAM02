@@ -10,16 +10,16 @@ function S = ciecam02_parameters(wp,Y_b,L_A,sur)
 %% Input and Output Arguments %%
 %
 %%% Inputs (*==default):
-% wp  = WhitePoint XYZ values [Xw,Yw,Zw], 1931 XYZ colorspace (Ymax==100).
-% Y_b = relative luminance of reference white in the adapting field.
-% L_A = adapting field luminance (cd/m^2).
-% sur = *'average'/'dim'/'dark'
-%     = 1x3 numeric vector, [F,c,N_c], CIECAM02 surround parameters.
+% wp  = NumericVector, whitepoint XYZ values [Xw,Yw,Zw], 1931 XYZ colorspace (Ymax==100).
+% Y_b = NumericScalar, relative luminance of reference white in the adapting field.
+% L_A = NumericScalar, adapting field luminance (cd/m^2).
+% sur = CharRowVector, one of *'average'/'dim'/'dark'.
+%     = NumericVector, size 1x3, [F,c,N_c], CIECAM02 surround parameters.
 %
 %%% Output:
-% S = scalar structure of CIECAM parameter values.
+% S = Scalar structure of CIECAM parameter values.
 %
-% S = ciecam02_parameters(wp,Y_b,L_A,sur)
+% S = ciecam02_parameters(wp,Y_b,L_A,*sur)
 
 %% Input Wrangling %%
 %
@@ -34,8 +34,9 @@ if nargin<4
 end
 if isnumeric(sur)
 	assert(isreal(sur)&&numel(sur)==3,'Surround input can be a 1x3 numeric vector')
+	sur = double(sur);
 	S.F = sur(1);  S.c = sur(2);  S.N_c = sur(3);
-elseif ischar(sur)
+elseif ischar(sur)&&isrow(sur)
 	switch lower(sur)
 		case 'average'
 			S.F = 1.0; S.c = 0.690; S.N_c = 1.00;
@@ -47,7 +48,7 @@ elseif ischar(sur)
 			error('Surround option "%s" is not supported.',sur)
 	end
 else
-	error('Surround must be character string or numeric vector.')
+	error('Surround must be a char row vector or a numeric vector.')
 end
 %
 %% Matrices %%

@@ -7,11 +7,11 @@ function xyz = cie_whitepoint(obs)
 %% Input and Output Arguments %%
 %
 %%% Input:
-% obs = Char 1xN, the name of the illuminant, e.g. 'D65' (the sRGB standard).
+% obs = CharRowVector, the name of the illuminant, e.g. 'D65' (the sRGB standard).
 %       Optional prefix specifies 2 or 10 degree, e.g. '2D50' or '10D50'.  
 %
 %%% Output:
-% XYZ = Numeric 1x3, tristimulus values, in 1931 XYZ colorspace (Ymax==100).
+% XYZ = NumericVector, whitepoint XYZ values [Xw,Yw,Zw], 1931 XYZ colorspace (Ymax==100).
 
 switch upper(obs)
 	case {'A','2A'}

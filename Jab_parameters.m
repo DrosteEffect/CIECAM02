@@ -11,14 +11,14 @@ function S = Jab_parameters(KL,c1,c2)
 %% Input and Output Arguments %%
 %
 %%% Inputs (*==default):
-% space = 1xN char, *'UCS'/'LCD'/'SCD': to select a standard CAM02 space:
+% space = CharRowVector, *'UCS'/'LCD'/'SCD' selects a standard CAM02 space:
 %         UniformColorSpace / LargeColorDifference / SmallColorDifference.
-% KL = scalar numeric, CAM02 coefficient (lightness parameter).
-% c1 = scalar numeric, CAM02 coefficient (space constant).
-% c2 = scalar numeric, CAM02 coefficient (space constant).
+% KL = NumericScalar, CAM02 coefficient (lightness parameter).
+% c1 = NumericScalar, CAM02 coefficient (space constant).
+% c2 = NumericScalar, CAM02 coefficient (space constant).
 %
 %%% Output:
-% S = scalar structure of CIECAM UCS parameter values.
+% S = Scalar structure of CIECAM UCS parameter values.
 %
 % S = Jab_parameters(KL,c1,c2)
 
