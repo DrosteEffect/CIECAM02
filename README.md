@@ -4,12 +4,12 @@ CIECAM02 Color Appearance Model and CAM02 Uniform ColorSpace for MATLAB
 Based on the paper "CIECAM02 and Its Recent Developments" by color
 researchers Ming Ronnier Luo and Changjun Li, published in the book
 "Advanced Color Image Processing and Analysis" on the 26th May 2012.
-s MATLAB implementation was inspired by the python module
+This MATLAB implementation was inspired by the python module
 "colorspacious" written by Nathaniel J. Smith, available here:
 
 https://github.com/njsmith/colorspacious
 
-Smith's comprehensive python module "colorspacious" was used to
+Smith's very comprehensive python module "colorspacious" was used to
 generate the new perceptually uniform colormaps which are now default
 for MatPlotLib 2.0. These colormaps are also available for MATLAB here:
 
