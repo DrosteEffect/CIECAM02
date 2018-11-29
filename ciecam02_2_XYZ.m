@@ -111,16 +111,20 @@ idx = abs(sind(h)) >= abs(cosd(h));
 nom = 460 * (p2 .* (2+p3)) / 1403;
 den = 220 * (2+p3) / 1403;
 %
+%initalize a,b for vector use 
+a=nan(isz(1),1);
+b=a;
+%
 tmp = cosd(h(idx))./sind(h(idx));
 b(idx) = nom(idx) ./ ((p1(idx) ./ sind(h(idx))) + den .* tmp - ...
-	(27/1403) + p3(idx).*(6300/1403));
+	(27/1403) + p3.*(6300/1403)); %bryce:change: p3 is a scalar so should not be p3(idx)
 a(idx) = b(idx) .* tmp;
 %
 idx = ~idx;
 %
 tmp = sind(h(idx))./cosd(h(idx));
 a(idx) = nom(idx) ./ ((p1(idx) ./ cosd(h(idx))) + den - ...
-	((27/1403) - p3(idx).*(6300/1403)) .* tmp);
+	((27/1403) - p3.*(6300/1403)) .* tmp); %bryce:change: p3 is a scalar so should not be p3(idx)
 b(idx) = a(idx) .* tmp;
 %
 idx = t==0;
