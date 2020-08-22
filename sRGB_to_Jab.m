@@ -1,20 +1,20 @@
-function Jab = srgb_to_Jab(rgb,isd,varargin)
-% Convert from sRGB1 colorspace to the perceptually uniform CAM02 colorspace J'a'b'.
+function jab = sRGB_to_Jab(rgb,isd,varargin)
+% Convert an array of sRGB values to perceptually uniform CAM02 values.
 %
-% (c) 2017-2019 Stephen Cobeldick
+% (c) 2017-2020 Stephen Cobeldick
 %
 %%% Syntax:
-%  Jab = srgb_to_Jab(rgb)
-%  Jab = srgb_to_Jab(rgb,isd)
-%  Jab = srgb_to_Jab(rgb,isd,space)
-%  Jab = srgb_to_Jab(rgb,isd,K_L,c1,c2)
+%  jab = sRGB_to_Jab(rgb)
+%  jab = sRGB_to_Jab(rgb,isd)
+%  jab = sRGB_to_Jab(rgb,isd,space)
+%  jab = sRGB_to_Jab(rgb,isd,K_L,c1,c2)
 %
 %% Examples %%
 %
-% >> RGB = [64,128,255];
-% >> Jab = srgb_to_Jab(RGB/255)
-% Jab =
-%       56.9166292124863     -7.94533638500214     -33.5933304829462
+% >> rgb = [64,128,255]/255;
+% >> jab = sRGB_to_Jab(rgb)
+% jab =
+%    56.9139   -7.9482  -33.5911
 %
 %% Input and Output Arguments %%
 %
@@ -27,7 +27,7 @@ function Jab = srgb_to_Jab(rgb,isd,varargin)
 %         UniformColorSpace / LargeColorDifference / SmallColorDifference.
 %
 %%% Outputs:
-% Jab = NumericArray of CAM02 colorspace values J'a'b'.
+% jab = NumericArray of CAM02 colorspace values J'a'b'.
 %       The same size as <rgb>, the last dimension encodes the J',a',b' values.
 %
 % See also JAB_TO_SRGB SRGB_TO_XYZ XYZ_TO_CIECAM02 CIECAM02_TO_JAB CIECAM02_PARAMETERS JAB_PARAMETERS
@@ -35,23 +35,21 @@ function Jab = srgb_to_Jab(rgb,isd,varargin)
 %% Input Wrangling %%
 %
 isz = size(rgb);
-assert(isnumeric(rgb)&&isz(end)==3,'Input <rgb> must be an Nx3 or RxCx3 numeric array.')
-assert(isreal(rgb)&&all(0<=rgb(:)&rgb(:)<=1),'Input <rgb> values must be 0<=rgb<=1.')
-rgb = double(reshape(rgb,[],3));
 %
 %% RGB2Jab %%
 %
-wp  = cie_whitepoint('D65');
-prm = ciecam02_parameters(wp,20,64/pi/5,'average');
-tmp = XYZ_to_ciecam02(100*srgb_to_xyz(rgb),prm);
-Jab = ciecam02_to_Jab(tmp,Jab_parameters(varargin{:}),nargin>1&&islogical(isd)&&isd);
-% Remember to include my license when copying my implementation.
-Jab = reshape(Jab,isz);
+wp  = CIE_whitepoint('D65');
+two = CIECAM02_parameters(wp,20,64/pi/5,'average');
+c02 = XYZ_to_CIECAM02(sRGB_to_XYZ(rgb),two);
+one = Jab_parameters(varargin{:});
+jab = CIECAM02_to_Jab(c02,one,nargin>1&&islogical(isd)&&isd);
+%
+jab = reshape(jab,isz);
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%srgb_to_Jab
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sRGB_to_Jab
 %
-% Copyright (c) 2017 Stephen Cobeldick
+% Copyright (c) 2017-2020 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.
