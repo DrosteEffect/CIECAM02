@@ -1,31 +1,31 @@
-function XYZ = ciecam02_to_XYZ(inp,S)
-% CIECAM02 to XYZ conversion (CIECAM02 Color Appearance Model to 1931 XYZ colorspace).
+function xyz = CIECAM02_to_XYZ(inp,S)
+% Convert a structure of CIECAM02 values to an array of CIE 1931 XYZ values.
 %
-% (c) 2017-2019 Stephen Cobeldick
+% (c) 2017-2020 Stephen Cobeldick
 %
 %%% Syntax:
-% XYZ = ciecam02_to_XYZ(inp,S)
+% xyz = CIECAM02_to_XYZ(inp,S)
 %
 %% Example %%
 %
-% >> inp.J = 43.7296106370812;
-% >> inp.M = 52.4958884171155;
-% >> inp.h = 256.695342260531;
-% >> wp  = cie_whitepoint('D65');
-% >> S   = ciecam02_parameters(wp,20,64/pi/5,'average');
-% >> XYZ = ciecam02_to_XYZ(inp,S)
-% XYZ =
-%       27.88352542538377  23.74833281838534  97.72201291885064
-% >> RGB = xyz_to_srgb(XYZ/100)*255
-% RGB =
-%       64  128  255
+% >> inp.J = 43.726007896909451;
+% >> inp.M = 52.493379855966843;
+% >> inp.h = 256.68767017409704;
+% >> wp  = CIE_whitepoint('D65');
+% >> S   = CIECAM02_parameters(wp,20,64/pi/5,'average');
+% >> xyz = CIECAM02_to_XYZ(inp,S)
+% xyz =
+%     0.2788    0.2375    0.9770
+% >> rgb = XYZ_to_sRGB(xyz)*255
+% rgb =
+%    64.0000  128.0000  255.0000
 %
 %% Input And Output Arguments %%
 %
 %%% Inputs:
 % inp = Scalar structure of the CIECAM02 values, with one field from each
 %       of these three groups: [J|Q], [C|M|s], and [H|h]. Each field must
-%       have exactly the same size Nx3 or RxCx3. The fields encode:
+%       have exactly the same size Nx1 or RxCx1. The fields encode:
 %       J = Lightness
 %       Q = Brightness
 %       C = Chroma
@@ -36,28 +36,34 @@ function XYZ = ciecam02_to_XYZ(inp,S)
 % S   = Scalar structure of parameters from CIECAM02_PARAMETERS.
 %
 %%% Outputs:
-% XYZ = NumericArray, tristimulus values, in 1931 XYZ colorspace (Ymax==100).
+% xyz = NumericArray, tristimulus values, in 1931 XYZ colorspace (Ymax==1).
 %       Size Nx3 or RxCx3, the last dimension encodes the XYZ values.
 %
-% See also CIECAM02_PARAMETERS XYZ_TO_CIECAM02 SRGB_TO_JAB JAB_TO_SRGB
+% See also CIECAM02_PARAMETERS XYZ_TO_CIECAM02 CIECAM02_TO_JAB SRGB_TO_JAB JAB_TO_SRGB
 
 %% Input Wrangling %%
 %
-assert(isstruct(inp)&&isscalar(inp),'Input <inp> must be a scalar structure.')
+assert(isstruct(inp)&&isscalar(inp),'SC:CIECAM02_to_XYZ:NotScalarStruct_inp',...
+	'1st input <inp> must be a scalar structure.')
 fld = fieldnames(inp);
 tmp = numel(fld);
 fld = [fld{:}];
-assert((tmp>=3)&&(tmp<=7),'Input <inp> must have three fields.')
+assert((tmp>=3)&&(tmp<=7),'SC:CIECAM02_to_XYZ:MustHaveThreeFields_inp',...
+	'1st input <inp> must have at least three fields: J, M, h.')
 tmp = structfun(@(a)isnumeric(a)&&isreal(a),inp);
-assert(all(tmp),'Input <inp> fields must be real numeric arrays.')
+assert(all(tmp),'SC:CIECAM02_to_XYZ:FieldsMustBeNumeric_inp',...
+	'1st input <inp> fields must be real numeric arrays.')
 tmp = structfun(@(a){size(a)},inp);
-assert(isequal(tmp{:}),'Input <inp> fields must be arrays of the same size.')
+assert(isequal(tmp{:}),'SC:CIECAM02_to_XYZ:FieldsMustBeSameSize_inp',...
+	'1st input <inp> fields must be arrays of the same size.')
 isz = tmp{1};
 isz(max(2,find([isz==1,true],1,'first'))) = 3;
 %
-name = 'ciecam02_parameters';
-assert(isstruct(S)&&isscalar(S),'Input <S> must be a scalar structure.')
-assert(strcmp(S.name,name),'Structure <S> must be that returned by "%s.m".',name)
+name = 'CIECAM02_parameters';
+assert(isstruct(S)&&isscalar(S),'SC:CIECAM02_to_XYZ:NotScalarStruct_S',...
+	'2nd input <S> must be a scalar structure.')
+assert(strcmp(S.name,name),'SC:CIECAM02_to_XYZ:UnknownStructOrigin_S',...
+	'2nd input <S> must be the structure returned by "%s.m".',name)
 %
 %% Conversion %%
 %
@@ -156,14 +162,14 @@ LMS = bsxfun(@rdivide,LMS_C,S.LMS_c);
 %
 %%% Step 8: tristimulus values:
 %
-XYZ = LMS / S.M_CAT02.';
+xyz = LMS / S.M_CAT02.';
 %
-XYZ = reshape(XYZ,isz);
+xyz = reshape(xyz,isz) ./ 100;
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ciecam02_to_XYZ
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_to_XYZ
 %
-% Copyright (c) 2017 Stephen Cobeldick
+% Copyright (c) 2017-2020 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.
