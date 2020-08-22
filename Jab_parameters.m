@@ -1,7 +1,7 @@
 function S = Jab_parameters(K_L,c1,c2)
 % Parameter values to define the CAM02 Color Space (UCS/LCD/SCD).
 %
-% (c) 2017-2019 Stephen Cobeldick
+% (c) 2017-2020 Stephen Cobeldick
 %
 %%% Syntax:
 % S = Jab_parameters()
@@ -26,7 +26,7 @@ switch nargin
 	case 0
 		K_L = 'UCS';
 	case 1
-		assert(ischar(K_L)&&isrow(K_L),'Input can be a 1xN character.')
+		assert(ischar(K_L),'Input can be a 1xN character.')
 	case 3
 		S.K_L = K_L; S.c1 = c1; S.c2 = c2;
 		K_L = '';
@@ -52,7 +52,7 @@ S.name = mfilename();
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Jab_parameters
 %
-% Copyright (c) 2017 Stephen Cobeldick
+% Copyright (c) 2017-2020 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.
