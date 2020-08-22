@@ -1,21 +1,21 @@
-function Jab = ciecam02_to_Jab(inp,S,isd)
-% Convert from CIECAM02 JMh values to the perceptually uniform CAM02 colorspace J'a'b'.
+function Jab = CIECAM02_to_Jab(inp,S,isd)
+% Convert a structure of CIECAM02 values to an array of CAM02 values.
 %
-% (c) 2017-2019 Stephen Cobeldick
+% (c) 2017-2020 Stephen Cobeldick
 %
 %%% Syntax:
-%  Jab = ciecam02_to_Jab(inp,S)
-%  Jab = ciecam02_to_Jab(inp,S,isd)
+%  Jab = CIECAM02_to_Jab(inp,S)
+%  Jab = CIECAM02_to_Jab(inp,S,isd)
 %
 %% Example %%
 %
-% >> inp.J = 43.7296106370812;
-% >> inp.M = 52.4958884171155;
-% >> inp.h = 256.695342260531;
+% >> inp.J = 43.726007896909451;
+% >> inp.M = 52.493379855966843;
+% >> inp.h = 256.68767017409704;
 % >> S = Jab_parameters();
-% >> Jab = ciecam02_to_Jab(inp,S)
+% >> Jab = CIECAM02_to_Jab(inp,S)
 % Jab =
-%       56.91748261167756  -7.943988550631903  -33.59323817506418
+%    56.9139   -7.9482  -33.5911
 %
 %% Input and Output Arguments %%
 %
@@ -33,25 +33,31 @@ function Jab = ciecam02_to_Jab(inp,S,isd)
 % Jab = NumericArray of CAM02 colorspace values J'a'b'.
 %       Size Nx3 or RxCx3, the last dimension encodes the J'a'b' values.
 %
-% See also JAB_PARAMETERS JAB_TO_CIECAM02 SRGB_TO_JAB JAB_TO_SRGB
+% See also JAB_PARAMETERS JAB_TO_CIECAM02 CIECAM02_TO_XYZ SRGB_TO_JAB JAB_TO_SRGB
 
 %% Input Wrangling %%
 %
-assert(isstruct(inp)&&isscalar(inp),'Input <inp> must be a scalar structure.')
+assert(isstruct(inp)&&isscalar(inp),'SC:CIECAM02_to_Jab:NotScalarStruct_inp',...
+	'1st input <inp> must be a scalar structure.')
 fld = fieldnames(inp);
 tmp = numel(fld);
-fld = [fld{:}];
-assert((tmp>=3)&&(tmp<=7),'Input <inp> must have three fields.')
+fld = [fld{:}]; %#ok<NASGU>
+assert((tmp>=3)&&(tmp<=7),'SC:CIECAM02_to_Jab:MustHaveThreeFields_inp',...
+	'1st input <inp> must have at least three fields (J, M, h).')
 tmp = structfun(@(a)isnumeric(a)&&isreal(a),inp);
-assert(all(tmp),'Input <inp> fields must be real numeric arrays.')
+assert(all(tmp),'SC:CIECAM02_to_Jab:FieldsMustBeNumeric_inp',...
+	'1st input <inp> fields must be real numeric arrays.')
 tmp = structfun(@(a){size(a)},inp);
-assert(isequal(tmp{:}),'Input <inp> fields must be arrays of the same size.')
+assert(isequal(tmp{:}),'SC:CIECAM02_to_Jab:FieldsMustBeSameSize_inp',...
+	'1st input <inp> fields must be arrays of the same size.')
 isz = tmp{1};
 isz(max(2,find([isz==1,true],1,'first'))) = 3;
 %
 name = 'Jab_parameters';
-assert(isstruct(S)&&isscalar(S),'Input <S> must be a scalar structure.')
-assert(strcmp(S.name,name),'Structure must be that returned by "%s.m".',name)
+assert(isstruct(S)&&isscalar(S),'SC:CIECAM02_to_Jab:NotScalarStruct_S',...
+	'2nd input <S> must be a scalar structure.')
+assert(strcmp(S.name,name),'SC:CIECAM02_to_Jab:UnknownStructOrigin_S',...
+	'2nd input <S> must be the structure returned by "%s.m".',name)
 %
 J = double(inp.J(:));
 M = double(inp.M(:));
@@ -73,9 +79,9 @@ bp = Mp .* sind(h);
 Jab = reshape([Jp,ap,bp],isz);
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ciecam02_to_Jab
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_to_Jab
 %
-% Copyright (c) 2017 Stephen Cobeldick
+% Copyright (c) 2017-2020 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

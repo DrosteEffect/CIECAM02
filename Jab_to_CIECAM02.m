@@ -1,26 +1,26 @@
-function out = Jab_to_ciecam02(Jab,S,isd)
-% Convert from the perceptually uniform CAM02 colorspace J'a'b' to CIECAM02 JMh values.
+function out = Jab_to_CIECAM02(jab,S,isd)
+% Convert an array of CAM02 values to a structure of CIECAM02 values.
 %
-% (c) 2017-2019 Stephen Cobeldick
+% (c) 2017-2020 Stephen Cobeldick
 %
 %%% Syntax:
-%  out = Jab_to_ciecam02(Jab,S)
-%  out = Jab_to_ciecam02(Jab,S,isd)
+%  out = Jab_to_CIECAM02(jab,S)
+%  out = Jab_to_CIECAM02(jab,S,isd)
 %
 %% Example %%
 %
-% >> Jab = [56.91748261167756,-7.943988550631903,-33.59323817506418];
+% >> Jab = [56.913892296685113,-7.948223793113011,-33.591062955940835];
 % >> S = Jab_parameters();
-% >> out = Jab_to_ciecam02(Jab,S)
+% >> out = Jab_to_CIECAM02(Jab,S)
 % out =
-%    J: 43.72961063708121
-%    M: 52.49588841711551
-%    h: 256.6953422605310
+%     J:  43.7260
+%     M:  52.4934
+%     h: 256.6877
 %
 %% Input and Output Arguments %%
 %
 %%% Inputs (*==default):
-% Jab = NumericArray, CAM02 perceptually uniform colorspace values J',a',b'.
+% jab = NumericArray, CAM02 perceptually uniform colorspace values J',a',b'.
 %       Size Nx3 or RxCx3, the last dimension encodes the J'a'b' values.
 % S   = Scalar structure of parameters from the function JAB_PARAMETERS.
 % isd = ScalarLogical, select if the J' values are divided by K_L (only
@@ -37,18 +37,29 @@ function out = Jab_to_ciecam02(Jab,S,isd)
 
 %% Input Wrangling %%
 %
-isz = size(Jab);
-assert(isnumeric(Jab)&&isreal(Jab)&&isz(end)==3,'Input <Jab> must be an Nx3 or RxCx3 numeric array.')
-Jab = double(reshape(Jab,[],3));
+isz = size(jab);
+assert(isnumeric(jab),'SC:Jab_to_CIECAM02:NotNumeric',...
+	'1st input <jab> must be a numeric array.')
+assert(isreal(jab),'SC:Jab_to_CIECAM02:Complex',...
+	'1st input <jab> cannot be complex.')
+assert(isz(end)==3,'SC:Jab_to_CIECAM02:InvalidSize',...
+	'1st input <jab> last dimension must have size 3 (e.g. Nx3 or RxCx3).')
+jab = reshape(jab,[],3);
 isz(end) = 1;
 %
-name = 'Jab_parameters';
-assert(isstruct(S)&&isscalar(S),'Input <S> must be a scalar structure.')
-assert(strcmp(S.name,name),'Structure must be that returned by "%s.m".',name)
+if ~isfloat(jab)
+	jab = double(jab);
+end
 %
-Jp = Jab(:,1);
-ap = Jab(:,2);
-bp = Jab(:,3);
+name = 'Jab_parameters';
+assert(isstruct(S)&&isscalar(S),'SC:Jab_to_CIECAM02:NotScalarStruct_S',...
+	'2nd input <S> must be a scalar structure.')
+assert(strcmp(S.name,name),'SC:Jab_to_CIECAM02:UnknownStructOrigin_S',...
+	'2nd input <S> must be the structure returned by "%s.m".',name)
+%
+Jp = jab(:,1);
+ap = jab(:,2);
+bp = jab(:,3);
 %
 %% Jab2JMh %%
 %
@@ -58,7 +69,7 @@ end
 %
 J  = -Jp ./ (S.c1 * Jp - 100*S.c1 -1);
 %
-h  = locAtan2d(ap,bp);
+h  = myAtan2d(ap,bp);
 Mp = hypot(ap,bp);
 M  = (exp(S.c2*Mp) - 1) / S.c2;
 %
@@ -66,14 +77,14 @@ out = struct('J',J,'M',M,'h',h);
 out = structfun(@(v)reshape(v,isz), out, 'UniformOutput',false);
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Jab_to_ciecam02
-function ang = locAtan2d(X,Y)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Jab_to_CIECAM02
+function ang = myAtan2d(X,Y)
 ang = mod(180*atan2(Y,X)/pi,360);
 ang(Y==0 & X==0) = 0;
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%locAtan2d
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%myAtan2d
 %
-% Copyright (c) 2017 Stephen Cobeldick
+% Copyright (c) 2017-2020 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

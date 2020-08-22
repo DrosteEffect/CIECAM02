@@ -1,34 +1,34 @@
-function out = XYZ_to_ciecam02(XYZ,S,isn)
-% XYZ to CIECAM02 conversion (1931 XYZ colorspace to CIECAM02 Color Appearance Model).
+function out = XYZ_to_CIECAM02(xyz,S,isn)
+% Convert an array of CIE 1931 XYZ values to a structure of CIECAM02 values.
 %
-% (c) 2017-2019 Stephen Cobeldick
+% (c) 2017-2020 Stephen Cobeldick
 %
 %%% Syntax:
-% out = XYZ_to_ciecam02(XYZ,S)
-% out = XYZ_to_ciecam02(XYZ,S,isn)
+% out = XYZ_to_CIECAM02(XYZ,S)
+% out = XYZ_to_CIECAM02(XYZ,S,isn)
 %
 %% Example %%
 %
-% >> RGB = [64,128,255];
-% >> XYZ = srgb_to_xyz(RGB/255)*100
-% XYZ =
-%       27.88352542538389  23.74833281838537  97.72201291885087
-% >> wp  = cie_whitepoint('D65');
-% >> S   = ciecam02_parameters(wp,20,64/pi/5,'average');
-% >> XYZ_to_ciecam02(XYZ,S)
+% >> rgb = [64,128,255]/255;
+% >> xyz = sRGB_to_XYZ(rgb)
+% xyz =
+%     0.2788    0.2375    0.9770
+% >> wp  = CIE_whitepoint('D65');
+% >> S   = CIECAM02_parameters(wp,20,64/pi/5,'average');
+% >> XYZ_to_CIECAM02(xyz,S)
 % ans =
-%     J: 43.7296106370812
-%     Q: 81.7991095162447
-%     C: 72.6160673792035
-%     M: 52.4958884171155
-%     s: 80.1102998021592
-%     H: 309.379495827481
-%     h: 256.695342260531
+%     J:  43.7260
+%     Q:  81.7957
+%     C:  72.6126
+%     M:  52.4934
+%     s:  80.1100
+%     H: 309.3756
+%     h: 256.6877
 %
 %% Input And Output Arguments %%
 %
 %%% Inputs (*==default):
-% XYZ = NumericArray, tristimulus values to convert, 1931 XYZ colorspace (Ymax==100).
+% xyz = NumericArray, tristimulus values to convert, 1931 XYZ colorspace (Ymax==1).
 %       Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values.
 % S   = Scalar structure of parameters from CIECAM02_PARAMETERS.
 % isn = *true/false -> negative A values are converted to NaNs/zeros.
@@ -48,21 +48,33 @@ function out = XYZ_to_ciecam02(XYZ,S,isn)
 
 %% Input Wrangling %%
 %
-isz = size(XYZ);
-assert(isnumeric(XYZ)&&isreal(XYZ),'Input <XYZ> must be a real numeric array.')
-assert(isz(end)==3,'Input <XYZ> must have size Nx3 or RxCx3.')
-XYZ = double(reshape(XYZ,[],3));
+isz = size(xyz);
+assert(isnumeric(xyz),'SC:XYZ_to_CIECAM02:NotNumeric',...
+	'1st input <xyz> must be a numeric array.')
+assert(isreal(xyz),'SC:XYZ_to_CIECAM02:Complex',...
+	'1st input <xyz> cannot be complex.')
+assert(isz(end)==3,'SC:XYZ_to_CIECAM02:InvalidSize',...
+	'1st input <xyz> last dimension must have size 3 (e.g. Nx3 or RxCx3).')
+xyz = reshape(xyz,[],3);
+err = 1e-4;
+assert(all(xyz(:,2)>=(0-err)&xyz(:,2)<=(1+err)),'Input <xyz> values must be scaled so 0<=Y<=1')
 isz(end) = 1;
 %
-name = 'ciecam02_parameters';
-assert(isstruct(S)&&isscalar(S),'Input <S> must be a scalar structure.')
-assert(strcmp(S.name,name),'Structure must be that returned by "%s.m".',name)
+if ~isfloat(xyz)
+	xyz = double(xyz);
+end
+%
+name = 'CIECAM02_parameters';
+assert(isstruct(S)&&isscalar(S),'SC:XYZ_to_CIECAM02:NotScalarStruct_S',...
+	'2nd input <S> must be a scalar structure.')
+assert(strcmp(S.name,name),'SC:XYZ_to_CIECAM02:UnknownStructOrigin_S',...
+	'2nd input <S> must be the structure returned by "%s.m".',name)
 %
 %% Conversion %%
 %
 %%% Step 1: cone responses:
 %
-LMS = XYZ * S.M_CAT02.';
+LMS = (100*xyz) * S.M_CAT02.';
 %
 %%% Step 2: cone responses considering luminance and surround:
 %
@@ -119,9 +131,9 @@ out = struct('J',J,'Q',Q,'C',C,'M',M,'s',s,'H',H,'h',h);
 out = structfun(@(v)reshape(v,isz), out, 'UniformOutput',false);
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%XYZ_to_ciecam02
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%XYZ_to_CIECAM02
 %
-% Copyright (c) 2017 Stephen Cobeldick
+% Copyright (c) 2017-2020 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.
