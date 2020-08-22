@@ -1,17 +1,17 @@
-function rgb = xyz_to_srgb(xyz)
-% Convert a matrix of XYZ1 values to sRGB1.
+function xyz = XYZ_to_sRGB(xyz)
+% Convert an array of CIE 1931 XYZ values to sRGB values.
 %
-% (c) 2107-2019 Stephen Cobeldick
+% (c) 2107-2020 Stephen Cobeldick
 %
 %%% Syntax:
-% rgb = xyz_to_srgb(xyz)
+% rgb = XYZ_to_sRGB(xyz)
 %
 %% Example %%
 %
-% >> XYZ = [27.88352542538389,23.74833281838537,97.72201291885087];
-% >> RGB = xyz_to_srgb(XYZ/100)*255
-% RGB =
-%       64  128  255
+% >> xyz = [0.278770472005685,0.237451735943392,0.977024183310834];
+% >> rgb = XYZ_to_sRGB(xyz)*255
+% rgb =
+%    64.0000  128.0000  255.0000
 %
 %% Input And Output Arguments %%
 %
@@ -28,30 +28,41 @@ function rgb = xyz_to_srgb(xyz)
 %% Input Wrangling %%
 %
 isz = size(xyz);
-assert(isnumeric(xyz)&&isz(end)==3&&isreal(xyz),'Input <rgb> must be an Nx3 or RxCx3 numeric array.')
+assert(isnumeric(xyz),'SC:XYZ_to_sRGB:NotNumeric',...
+	'1st input <xyz> must be a numeric array.')
+assert(isreal(xyz),'SC:XYZ_to_sRGB:Complex',...
+	'1st input <xyz> cannot be complex.')
+assert(isz(end)==3,'SC:XYZ_to_sRGB:InvalidSize',...
+	'1st input <xyz> last dimension must have size 3 (e.g. Nx3 or RxCx3).')
 xyz = reshape(xyz,[],3);
+err = 1e-4;
+assert(all(xyz(:,2)>=(0-err)&xyz(:,2)<=(1+err)),'Input <xyz> values must be scaled so 0<=Y<=1')
+%
+if ~isfloat(xyz)
+	xyz = double(xyz);
+end
 %
 %% XYZ2RGB %%
 %
-M = [...
-	+3.2406255,-1.5372080,-0.4986286;...
-	-0.9689307,+1.8757561,+0.0415175;...
-	+0.0557101,-0.2040211,+1.0569959];
-rgb = max(0,min(1, locGammaCor(xyz * M.')));
+M = [... High-precision sRGB to XYZ matrix:
+	0.4124564,0.3575761,0.1804375;...
+	0.2126729,0.7151522,0.0721750;...
+	0.0193339,0.1191920,0.9503041];
+xyz = max(0,min(1, sGammaCor(xyz / M.')));
 % Remember to include my license when copying my implementation.
-rgb = reshape(rgb,isz);
+xyz = reshape(xyz,isz);
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%xyz_to_srgb
-function rgb = locGammaCor(rgb)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%XYZ_to_sRGB
+function rgb = sGammaCor(rgb)
 % Gamma correction of sRGB data.
 idx = rgb <= 0.0031308;
 rgb(idx) = 12.92 * rgb(idx);
 rgb(~idx) = real(1.055 * rgb(~idx).^(1/2.4) - 0.055);
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%locGammaCor
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sGammaCor
 %
-% Copyright (c) 2017 Stephen Cobeldick
+% Copyright (c) 2017-2020 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.
