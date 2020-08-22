@@ -69,6 +69,7 @@ Of course there is no point in writing a conversion this complex without
 testing it thoroughly: test functions check the conversion between XYZ
 and CIECAM02 and J'a'b'. The test values are those referenced in
 "colorspacious", and the test functions are included in this repository.
+
 CIECAM02 Color Appearance Model and CAM02 Uniform ColorSpace for MATLAB
 =======================================================================
 
