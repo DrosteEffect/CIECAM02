@@ -1,16 +1,16 @@
-function S = ciecam02_parameters(wp,Y_b,L_A,sur)
+function S = CIECAM02_parameters(wp,Y_b,L_A,sur)
 % Parameter values defined in the CIECAM02 model "Step 0".
 %
-% (c) 2017-2019 Stephen Cobeldick
+% (c) 2017-2020 Stephen Cobeldick
 %
 %%% Syntax:
-% S = ciecam02_parameters(wp,Y_b,L_A)
-% S = ciecam02_parameters(wp,Y_b,L_A,sur)
+% S = CIECAM02_parameters(wp,Y_b,L_A)
+% S = CIECAM02_parameters(wp,Y_b,L_A,sur)
 %
 %% Input and Output Arguments %%
 %
 %%% Inputs (*==default):
-% wp  = NumericVector, whitepoint XYZ values [Xw,Yw,Zw], 1931 XYZ colorspace (Ymax==100).
+% wp  = NumericVector, whitepoint XYZ values [Xw,Yw,Zw], 1931 XYZ colorspace (Ymax==1).
 % Y_b = NumericScalar, relative luminance of reference white in the adapting field.
 % L_A = NumericScalar, adapting field luminance (cd/m^2).
 % sur = CharRowVector, one of *'average'/'dim'/'dark'.
@@ -23,38 +23,61 @@ function S = ciecam02_parameters(wp,Y_b,L_A,sur)
 
 %% Input Wrangling %%
 %
-assert(isnumeric(Y_b)&&isscalar(Y_b)&&isreal(Y_b),'Y_b must be a real scalar numeric.')
-assert(isnumeric(L_A)&&isscalar(L_A)&&isreal(L_A),'L_A must be a real scalar numeric.')
-assert(isnumeric(wp) &&numel(wp)==3 &&isreal(wp),'WhitePoint must be 3 real numeric values.')
+assert(isnumeric(L_A)&&isscalar(L_A)&&isreal(L_A),'SC:CIECAM02_parameters:NotScalarNumeric_L_a',...
+	'3rd input <L_a> must be a real scalar numeric.')
+assert(isnumeric(Y_b)&&isscalar(Y_b)&&isreal(Y_b),'SC:CIECAM02_parameters:NotScalarNumeric_Y_b',...
+	'2nd input <Y_b> must be a real scalar numeric.')
+assert(isnumeric(wp) &&numel(wp)==3 &&isreal(wp),'SC:CIECAM02_parameters:NotThreeNumeric_wp',...
+	'1st input <wp> must be 3 real values in a numeric vector.')
+err = 1e-4;
+assert(wp(2)>=(0-err)&wp(2)<=(1+err),'SC:CIECAM02_parameters:OutOfRangeY_wp',...
+	'1st input <wp> must define the whitepoint scaled for Ymax==1')
 %
-S.XYZ_w = wp(:).';
+S.XYZ_w = 100*wp(:).';
 %
 if nargin<4
 	sur = 'average';
 end
 if isnumeric(sur)
-	assert(isreal(sur)&&numel(sur)==3,'Surround input can be a 1x3 numeric vector')
+	assert(isreal(sur)&&numel(sur)==3,'SC:CIECAM02_parameters:NotThreeNumeric_sur',...
+		'4th input <sur> can be a 1x3 numeric vector')
 	sur = double(sur);
-	S.F = sur(1);  S.c = sur(2);  S.N_c = sur(3);
+	S.F   = sur(1);
+	S.c   = sur(2);
+	S.N_c = sur(3);
 elseif ischar(sur)&&isrow(sur)
 	switch lower(sur)
 		case 'average'
-			S.F = 1.0; S.c = 0.690; S.N_c = 1.00;
+			S.F   = 1.0;
+			S.c   = 0.690;
+			S.N_c = 1.00;
 		case 'dim'
-			S.F = 0.9; S.c = 0.590; S.N_c = 0.90;
+			S.F   = 0.9;
+			S.c   = 0.590;
+			S.N_c = 0.90;
 		case 'dark'
-			S.F = 0.8; S.c = 0.525; S.N_c = 0.80;
+			S.F   = 0.8;
+			S.c   = 0.525;
+			S.N_c = 0.80;
 		otherwise
-			error('Surround option "%s" is not supported.',sur)
+			error('SC:CIECAM02_parameters:UnknownValue_sur',...
+				'4th input <sur> value "%s" is not supported.',sur)
 	end
 else
-	error('Surround must be a char row vector or a numeric vector.')
+	error('SC:CIECAM02_parameters:UnsupportedValue_sur',...
+		'Surround must be a char row vector or a numeric vector.')
 end
 %
 %% Matrices %%
 %
-S.M_CAT02 = [0.7328,0.4296,-0.1624;-0.7036,1.6975,0.0061;0.003,0.0136,0.9834];
-S.M_HPE   = [0.38971,0.68898,-0.07868;-0.22981,1.1834,0.04641;0,0,1];
+S.M_CAT02 = [...
+	+0.7328,+0.4296,-0.1624;...
+	-0.7036,+1.6975,+0.0061;...
+	+0.0030,+0.0136,+0.9834];
+S.M_HPE = [...
+	+0.38971,+0.68898,-0.07868;...
+	-0.22981,+1.18340,+0.04641;...
+	+0      ,+0      ,+1      ];
 %
 S.h_i = [20.14;90.00;164.25;237.53;380.14];
 S.e_i = [0.8;0.7;1.0;1.2;0.8];
@@ -83,9 +106,9 @@ S.A_w = (S.LMSp_aw * [2;1;1/20] - 0.305) * S.N_bb;
 S.name = mfilename();
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ciecam02_parameters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_parameters
 %
-% Copyright (c) 2017 Stephen Cobeldick
+% Copyright (c) 2017-2020 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.
