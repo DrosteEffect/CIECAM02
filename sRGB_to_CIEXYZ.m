@@ -1,16 +1,16 @@
-function xyz = sRGB_to_XYZ(rgb)
+function XYZ = sRGB_to_CIEXYZ(rgb)
 % Convert an array of sRGB values to CIE 1931 XYZ values.
 %
 % (c) 2107-2020 Stephen Cobeldick
 %
 %%% Syntax:
-% xyz = sRGB_to_XYZ(rgb)
+% XYZ = sRGB_to_CIEXYZ(rgb)
 %
 %% Example %%
 %
 % >> rgb = [64,128,255]/255;
-% >> xyz = sRGB_to_XYZ(rgb)
-% xyz =
+% >> XYZ = sRGB_to_CIEXYZ(rgb)
+% XYZ =
 %     0.2788    0.2375    0.9770
 %
 %% Input And Output Arguments %%
@@ -20,22 +20,22 @@ function xyz = sRGB_to_XYZ(rgb)
 %       Size Nx3 or RxCx3, the last dimension encodes the R,G,B values.
 %
 %%% Output:
-% xyz = NumericArray, tristimulus values, scaled XYZ colorspace (Ymax==1).
+% XYZ = NumericArray, tristimulus values, scaled XYZ colorspace (Ymax==1).
 %       The same size as <rgb>, the last dimension encodes the X,Y,Z values.
 %
-% See also XYZ_TO_SRGB XYZ_TO_CIECAM02
+% See also CIEXYZ_TO_SRGB SRGB_TO_CAM02UCS CIEXYZ_TO_CIECAM02
 
 %% Input Wrangling %%
 %
 isz = size(rgb);
-assert(isnumeric(rgb),'SC:sRGB_to_XYZ:NotNumeric',...
+assert(isnumeric(rgb),'SC:sRGB_to_CIEXYZ:rgb:NotNumeric',...
 	'1st input <rgb> must be a numeric array.')
-assert(isreal(rgb),'SC:sRGB_to_XYZ:Complex',...
+assert(isreal(rgb),'SC:sRGB_to_CIEXYZ:rgb:ComplexValue',...
 	'1st input <rgb> cannot be complex.')
-assert(isz(end)==3,'SC:sRGB_to_XYZ:InvalidSize',...
+assert(isz(end)==3,'SC:sRGB_to_CIEXYZ:rgb:InvalidSize',...
 	'1st input <rgb> last dimension must have size 3 (e.g. Nx3 or RxCx3).')
 rgb = reshape(rgb,[],3);
-assert(all(0<=rgb(:)&rgb(:)<=1),'',...
+assert(all(0<=rgb(:)&rgb(:)<=1),'SC:sRGB_to_CIEXYZ:rgb:OutOfRange',...
 	'1st input <rgb> values must be 0<=rgb<=1')
 %
 if ~isfloat(rgb)
@@ -48,12 +48,12 @@ M = [... High-precision sRGB to XYZ matrix:
 	0.4124564,0.3575761,0.1804375;...
 	0.2126729,0.7151522,0.0721750;...
 	0.0193339,0.1191920,0.9503041];
-xyz = sGammaInv(rgb) * M.';
+XYZ = sGammaInv(rgb) * M.';
 % Remember to include my license when copying my implementation.
-xyz = reshape(xyz,isz);
+XYZ = reshape(max(0,min(1,XYZ)),isz);
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sRGB_to_xyz
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sRGB_to_CIEXYZ
 function rgb = sGammaInv(rgb)
 % Inverse gamma transform of sRGB data.
 idx = rgb <= 0.04045;
