@@ -1,10 +1,10 @@
-function xyz = CIECAM02_to_XYZ(inp,S)
+function XYZ = CIECAM02_to_CIEXYZ(inp,prm)
 % Convert a structure of CIECAM02 values to an array of CIE 1931 XYZ values.
 %
 % (c) 2017-2020 Stephen Cobeldick
 %
 %%% Syntax:
-% xyz = CIECAM02_to_XYZ(inp,S)
+% xyz = CIECAM02_to_CIEXYZ(inp,prm)
 %
 %% Example %%
 %
@@ -12,11 +12,11 @@ function xyz = CIECAM02_to_XYZ(inp,S)
 % >> inp.M = 52.493379855966843;
 % >> inp.h = 256.68767017409704;
 % >> wp  = CIE_whitepoint('D65');
-% >> S   = CIECAM02_parameters(wp,20,64/pi/5,'average');
-% >> xyz = CIECAM02_to_XYZ(inp,S)
-% xyz =
+% >> prm = CIECAM02_parameters(wp,20,64/pi/5,'average');
+% >> XYZ = CIECAM02_to_CIEXYZ(inp,prm)
+% XYZ =
 %     0.2788    0.2375    0.9770
-% >> rgb = XYZ_to_sRGB(xyz)*255
+% >> rgb = CIEXYZ_to_sRGB(XYZ)*255
 % rgb =
 %    64.0000  128.0000  255.0000
 %
@@ -33,37 +33,43 @@ function xyz = CIECAM02_to_XYZ(inp,S)
 %       s = Saturation
 %       H = Hue Composition
 %       h = Hue Angle
-% S   = Scalar structure of parameters from CIECAM02_PARAMETERS.
+% prm = Scalar structure of parameters from CIECAM02_PARAMETERS.
 %
 %%% Outputs:
-% xyz = NumericArray, tristimulus values, in 1931 XYZ colorspace (Ymax==1).
+% XYZ = NumericArray, tristimulus values, in 1931 XYZ colorspace (Ymax==1).
 %       Size Nx3 or RxCx3, the last dimension encodes the XYZ values.
 %
-% See also CIECAM02_PARAMETERS XYZ_TO_CIECAM02 CIECAM02_TO_JAB SRGB_TO_JAB JAB_TO_SRGB
+% See also CIEXYZ_TO_CIECAM02 CIEXYZ_TO_SRGB CIECAM02_TO_CAM02UCS
+% CIECAM02_PARAMETERS
 
 %% Input Wrangling %%
 %
-assert(isstruct(inp)&&isscalar(inp),'SC:CIECAM02_to_XYZ:NotScalarStruct_inp',...
+assert(isstruct(inp)&&isscalar(inp),...
+	'SC:CIECAM02_to_CIEXYZ:inp:NotScalarStruct',...
 	'1st input <inp> must be a scalar structure.')
 fld = fieldnames(inp);
 tmp = numel(fld);
 fld = [fld{:}];
-assert((tmp>=3)&&(tmp<=7),'SC:CIECAM02_to_XYZ:MustHaveThreeFields_inp',...
+assert((tmp>=3)&&(tmp<=7),...
+	'SC:CIECAM02_to_CIEXYZ:inp:MustHaveThreeFields',...
 	'1st input <inp> must have at least three fields: J, M, h.')
-tmp = structfun(@(a)isnumeric(a)&&isreal(a),inp);
-assert(all(tmp),'SC:CIECAM02_to_XYZ:FieldsMustBeNumeric_inp',...
+assert(all(structfun(@(a)isnumeric(a)&&isreal(a),inp)),...
+	'SC:CIECAM02_to_CIEXYZ:inp:FieldsMustBeNumeric',...
 	'1st input <inp> fields must be real numeric arrays.')
 tmp = structfun(@(a){size(a)},inp);
-assert(isequal(tmp{:}),'SC:CIECAM02_to_XYZ:FieldsMustBeSameSize_inp',...
+assert(isequal(tmp{:}),...
+	'SC:CIECAM02_to_CIEXYZ:inp:FieldsMustBeSameSize',...
 	'1st input <inp> fields must be arrays of the same size.')
 isz = tmp{1};
 isz(max(2,find([isz==1,true],1,'first'))) = 3;
 %
 name = 'CIECAM02_parameters';
-assert(isstruct(S)&&isscalar(S),'SC:CIECAM02_to_XYZ:NotScalarStruct_S',...
-	'2nd input <S> must be a scalar structure.')
-assert(strcmp(S.name,name),'SC:CIECAM02_to_XYZ:UnknownStructOrigin_S',...
-	'2nd input <S> must be the structure returned by "%s.m".',name)
+assert(isstruct(prm)&&isscalar(prm),...
+	'SC:CIECAM02_to_CIEXYZ:prm:NotScalarStruct',...
+	'2nd input <prm> must be a scalar structure.')
+assert(strcmp(prm.name,name),...
+	'SC:CIECAM02_to_CIEXYZ:prm:UnknownStructOrigin',...
+	'2nd input <prm> must be the structure returned by "%s.m".',name)
 %
 %% Conversion %%
 %
@@ -74,23 +80,25 @@ switch true % goal: lightness (J):
 		J = double(inp.J(:));
 	case any(fld=='Q')
 		Q = double(inp.Q(:));
-		J = 6.25 * ((S.c .* Q) ./ ((S.A_w+4) * sqrt(sqrt(S.F_L)))).^2;
+		J = 6.25 * ((prm.c .* Q) ./ ((prm.A_w+4) * sqrt(sqrt(prm.F_L)))).^2;
 	otherwise
-		error('Input <inp> must contain one field ''J'' or ''Q''.')
+		error('SC:CIECAM02_to_CIEXYZ:inp:MissingJQ',...
+			'Input <inp> must contain one field "J" or "Q".')
 end
 %
 switch true % goal: chroma (C):
 	case any(fld=='C')
 		C = double(inp.C(:));
 	case any(fld=='M')
-		C = double(inp.M(:)) ./ sqrt(sqrt(S.F_L));
+		C = double(inp.M(:)) ./ sqrt(sqrt(prm.F_L));
 	case any(fld=='s')
 		if any(fld=='J')
-			Q = (4./S.c) .* sqrt(J/100) .* (S.A_w+4) .* sqrt(sqrt(S.F_L));
+			Q = (4./prm.c) .* sqrt(J/100) .* (prm.A_w+4) .* sqrt(sqrt(prm.F_L));
 		end
-		C = (double(inp.s(:)) / 100).^2 * (Q ./ sqrt(sqrt(S.F_L)));
+		C = (double(inp.s(:)) / 100).^2 * (Q ./ sqrt(sqrt(prm.F_L)));
 	otherwise
-		error('Input <inp> must contain one field ''C'' or ''M'' or ''s''.')
+		error('SC:CIECAM02_to_CIEXYZ:inp:MissingCMs',...
+			'Input <inp> must contain one field "C" or "M" or "s".')
 end
 %
 switch true % goal: hue angle (h):
@@ -98,26 +106,27 @@ switch true % goal: hue angle (h):
 		h = double(inp.h(:));
 	case any(fld=='H')
 		H = double(inp.H(:));
-		tmp = bsxfun(@le,S.H_i,H.');
+		tmp = bsxfun(@le,prm.H_i,H.');
 		tmp = flipud(cumsum(flipud(tmp),1))==1;
 		[idx,~] = find(tmp);
-		dH = (H - S.H_i(idx));
-		nom = dH .* (S.e_i(idx+1).*S.h_i(idx) - S.e_i(idx).*S.h_i(idx+1))...
-			- 100 .* S.e_i(idx+1) .* S.h_i(idx);
-		den = dH .* (S.e_i(idx+1)-S.e_i(idx))...
-			- 100 .* S.e_i(idx+1);
+		dH = (H - prm.H_i(idx));
+		nom = dH .* (prm.e_i(idx+1).*prm.h_i(idx) - prm.e_i(idx).*prm.h_i(idx+1))...
+			- 100 .* prm.e_i(idx+1) .* prm.h_i(idx);
+		den = dH .* (prm.e_i(idx+1)-prm.e_i(idx))...
+			- 100 .* prm.e_i(idx+1);
 		h = mod(nom./den, 360);
 	otherwise
-		error('Input <inp> must contain one field ''h'' or ''H''.')
+		error('SC:CIECAM02_to_CIEXYZ:inp:MissingHh',...
+			'Input <inp> must contain one field "h" or "H".')
 end
 %
 %%% Step 2:
 %
-t = (C ./ (sqrt(J./100) .* (1.64 - 0.29.^S.n).^0.73)) .^ (1/0.9);
+t = (C ./ (sqrt(J./100) .* (1.64 - 0.29.^prm.n).^0.73)) .^ (1/0.9);
 et = (cos(pi*h/180+2)+3.8) / 4;
-A = S.A_w .* (J./100) .^ (1./(S.c*S.z));
-p1 = (50000/13 * S.N_c * S.N_cb) * et ./ t;
-p2 = A ./ S.N_bb + 0.305;
+A = prm.A_w .* (J./100) .^ (1./(prm.c*prm.z));
+p1 = (50000/13 * prm.N_c * prm.N_cb) * et ./ t;
+p2 = A ./ prm.N_bb + 0.305;
 p3 = 21/20;
 %
 %%% Step 3: red-green (a), yellow-blue (b):
@@ -150,24 +159,24 @@ LMSp_a = (460*p2+[+451*a+288*b,-891*a-261*b,-220*a-6300*b])/1403;
 %%% Step 5: Hunt-Pointer-Estevez response:
 %
 tmp = (27.13 * abs(LMSp_a-0.1)) ./ (400-abs(LMSp_a-0.1));
-LMSp = sign(LMSp_a - 0.1) .* (100./S.F_L) .* tmp.^(1/0.42);
+LMSp = sign(LMSp_a - 0.1) .* (100./prm.F_L) .* tmp.^(1/0.42);
 %
 %%% Step 6: cone responses considering luminance and surround:
 %
-LMS_C = LMSp * (S.M_CAT02 / S.M_HPE).';
+LMS_C = LMSp * (prm.M_CAT02 / prm.M_HPE).';
 %
 %%% Step 7: cone responses:
 %
-LMS = bsxfun(@rdivide,LMS_C,S.LMS_c);
+LMS = bsxfun(@rdivide,LMS_C,prm.LMS_c);
 %
 %%% Step 8: tristimulus values:
 %
-xyz = LMS / S.M_CAT02.';
+XYZ = LMS / prm.M_CAT02.';
 %
-xyz = reshape(xyz,isz) ./ 100;
+XYZ = reshape(max(0,min(1,XYZ/100)),isz);
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_to_XYZ
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_to_CIEXYZ
 %
 % Copyright (c) 2017-2020 Stephen Cobeldick
 %
