@@ -1,54 +1,57 @@
-function rgb = Jab_to_sRGB(jab,isd,varargin)
-% Convert an array of perceptually uniform CAM02 values to sRGB values.
+function rgb = CAM02UCS_to_sRGB(Jab,isd,varargin)
+% Convert an array of perceptually uniform CAM02 colorspace values to sRGB values.
 %
 % (c) 2017-2020 Stephen Cobeldick
 %
 %%% Syntax:
-%  rgb = Jab_to_sRGB(jab)
-%  rgb = Jab_to_sRGB(jab,isd)
-%  rgb = Jab_to_sRGB(jab,isd,space)
-%  rgb = Jab_to_sRGB(jab,isd,K_L,c1,c2)
+%  rgb = CAM02UCS_to_sRGB(Jab)
+%  rgb = CAM02UCS_to_sRGB(Jab,isd)
+%  rgb = CAM02UCS_to_sRGB(Jab,isd,space)
+%  rgb = CAM02UCS_to_sRGB(Jab,isd,K_L,c1,c2)
+%
+% If the input was being used for calculating the euclidean color distance
+% (i.e. deltaE) use isd=true, so that J' values are multiplied by K_L.
 %
 %% Examples %%
 %
-% >> jab = [56.913892296685113,-7.948223793113011,-33.591062955940835];
-% >> rgb = Jab_to_sRGB(jab)*255
+% >> Jab = [56.913892296685113,-7.948223793113011,-33.591062955940835];
+% >> rgb = CAM02UCS_to_sRGB(Jab)*255
 % rgb =
 %    64.0000  128.0000  255.0000
 %
 %% Input and Output Arguments %%
 %
 %%% Inputs (*==default):
-% jab   = NumericArray, CAM02 perceptually uniform colorspace values J'a'b'.
+% Jab   = NumericArray, CAM02 perceptually uniform colorspace values J'a'b'.
 %         Size Nx3 or RxCx3, the last dimension encodes the J',a',b' values.
-% isd   = ScalarLogical, select if the J' values are divided by K_L (only
-%         required to calculate deltaE for LCD and SCD colorspaces), *false.
+% isd   = ScalarLogical, true/false* = euclidean distance/reference J' values.
 % space = CharRowVector, *'UCS'/'LCD'/'SCD' selects a standard CAM02 space:
 %         UniformColorSpace / LargeColorDifference / SmallColorDifference.
 %
 %%% Outputs:
 % rgb = NumericArray of sRGB colorspace values, scaled so 0<=rgb<=1.
-%       Same size as input <jab>, the last dimension encodes the R,G,B values.
+%       Same size as input <Jab>, the last dimension encodes the R,G,B values.
 %
-% See also SRGB_TO_JAB JAB_TO_CIECAM02 CIECAM02_TO_XYZ XYZ_TO_SRGB CIECAM02_PARAMETERS JAB_PARAMETERS
+% See also SRGB_TO_CAM02UCS CAM02UCS_PARAMETERS CIECAM02_PARAMETERS CIE_WHITEPOINT
+% CAM02UCS_TO_CIECAM02 SRGB_TO_CIEXYZ
 
 %% Input Wrangling %%
 %
-isz = size(jab);
+isz = size(Jab);
 %
 %% Jab2RGB %%
 %
-one = Jab_parameters(varargin{:});
-c02 = Jab_to_CIECAM02(jab,one,nargin>1&&islogical(isd)&&isd);
+one = CAM02UCS_parameters(varargin{:});
+c02 = CAM02UCS_to_CIECAM02(Jab,one,nargin>1&&isd);
 wp  = CIE_whitepoint('D65');
 two = CIECAM02_parameters(wp,20,64/pi/5,'average');
-xyz = CIECAM02_to_XYZ(c02,two);
-rgb = XYZ_to_sRGB(xyz);
+xyz = CIECAM02_to_CIEXYZ(c02,two);
+rgb = CIEXYZ_to_sRGB(xyz);
 %
 rgb = reshape(rgb,isz);
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sRGB_to_Jab
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CAM02UCS_to_sRGB
 %
 % Copyright (c) 2017-2020 Stephen Cobeldick
 %
