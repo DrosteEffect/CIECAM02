@@ -1,17 +1,20 @@
-function out = Jab_to_CIECAM02(jab,S,isd)
-% Convert an array of CAM02 values to a structure of CIECAM02 values.
+function out = CAM02UCS_to_CIECAM02(Jab,prm,isd)
+% Convert an array of CAM02 colorspace values to a structure of CIECAM02 values.
 %
 % (c) 2017-2020 Stephen Cobeldick
 %
 %%% Syntax:
-%  out = Jab_to_CIECAM02(jab,S)
-%  out = Jab_to_CIECAM02(jab,S,isd)
+%  out = CAM02UCS_to_CIECAM02(Jab,prm)
+%  out = CAM02UCS_to_CIECAM02(Jab,prm,isd)
+%
+% If the input was being used for calculating the euclidean color distance
+% (i.e. deltaE) use isd=true, so that J' values are multiplied by K_L.
 %
 %% Example %%
 %
 % >> Jab = [56.913892296685113,-7.948223793113011,-33.591062955940835];
-% >> S = Jab_parameters();
-% >> out = Jab_to_CIECAM02(Jab,S)
+% >> prm = CAM02UCS_parameters();
+% >> out = CAM02UCS_to_CIECAM02(Jab,prm)
 % out =
 %     J:  43.7260
 %     M:  52.4934
@@ -20,64 +23,69 @@ function out = Jab_to_CIECAM02(jab,S,isd)
 %% Input and Output Arguments %%
 %
 %%% Inputs (*==default):
-% jab = NumericArray, CAM02 perceptually uniform colorspace values J',a',b'.
+% Jab = NumericArray, CAM02 perceptually uniform colorspace values J',a',b'.
 %       Size Nx3 or RxCx3, the last dimension encodes the J'a'b' values.
-% S   = Scalar structure of parameters from the function JAB_PARAMETERS.
-% isd = ScalarLogical, select if the J' values are divided by K_L (only
-%       required to calculate deltaE for LCD and SCD colorspaces), *false.
+% prm = ScalarStructure of parameters from the function CAM02UCS_PARAMETERS.
+% isd = ScalarLogical, true/false* = euclidean distance/reference J' values.
 %
 %%% Outputs:
-% out = Scalar structure of CIECAM02 J, M, and h values. Each field
+% out = ScalarStructure of CIECAM02 J, M, and h values. Each field
 %       has exactly the same size Nx1 or RxCx1. The fields encode:
 %       J = Lightness
 %       M = Colorfulness
 %       h = Hue Angle
 %
-% See also JAB_PARAMETERS CIECAM02_TO_JAB SRGB_TO_JAB JAB_TO_SRGB
+% See also CIECAM02_TO_CAM02UCS CAM02UCS_PARAMETERS
+% CAM02UCS_TO_SRGB SRGB_TO_CAM02UCS CIECAM02_TO_CIEXYZ
 
 %% Input Wrangling %%
 %
-isz = size(jab);
-assert(isnumeric(jab),'SC:Jab_to_CIECAM02:NotNumeric',...
-	'1st input <jab> must be a numeric array.')
-assert(isreal(jab),'SC:Jab_to_CIECAM02:Complex',...
-	'1st input <jab> cannot be complex.')
-assert(isz(end)==3,'SC:Jab_to_CIECAM02:InvalidSize',...
-	'1st input <jab> last dimension must have size 3 (e.g. Nx3 or RxCx3).')
-jab = reshape(jab,[],3);
+isz = size(Jab);
+assert(isnumeric(Jab),...
+	'SC:CAM02UCS_to_CIECAM02:Jab:NotNumeric',...
+	'1st input <Jab> must be a numeric array.')
+assert(isreal(Jab),...
+	'SC:CAM02UCS_to_CIECAM02:Jab:ComplexValue',...
+	'1st input <Jab> cannot be complex.')
+assert(isz(end)==3,...
+	'SC:CAM02UCS_to_CIECAM02:Jab:InvalidSize',...
+	'1st input <Jab> last dimension must have size 3 (e.g. Nx3 or RxCx3).')
+Jab = reshape(Jab,[],3);
 isz(end) = 1;
 %
-if ~isfloat(jab)
-	jab = double(jab);
+if ~isfloat(Jab)
+	Jab = double(Jab);
 end
 %
-name = 'Jab_parameters';
-assert(isstruct(S)&&isscalar(S),'SC:Jab_to_CIECAM02:NotScalarStruct_S',...
-	'2nd input <S> must be a scalar structure.')
-assert(strcmp(S.name,name),'SC:Jab_to_CIECAM02:UnknownStructOrigin_S',...
-	'2nd input <S> must be the structure returned by "%s.m".',name)
+name = 'CAM02UCS_parameters';
+assert(isstruct(prm)&&isscalar(prm),...
+	'SC:CAM02UCS_to_CIECAM02:prm:NotScalarStruct',...
+	'2nd input <prm> must be a scalar structure.')
+assert(strcmp(prm.name,name),...
+	'SC:CAM02UCS_to_CIECAM02:prm:UnknownStructOrigin',...
+	'2nd input <prm> must be the structure returned by "%s.m".',name)
 %
-Jp = jab(:,1);
-ap = jab(:,2);
-bp = jab(:,3);
+Jp = Jab(:,1);
+ap = Jab(:,2);
+bp = Jab(:,3);
 %
 %% Jab2JMh %%
 %
-if nargin>2&&islogical(isd)&&isd
-	Jp = Jp * S.K_L;
+if nargin>2&&isd
+	Jp = Jp * prm.K_L;
 end
 %
-J  = -Jp ./ (S.c1 * Jp - 100*S.c1 -1);
+J  = -Jp ./ (prm.c1 * Jp - 100*prm.c1 -1);
 %
 h  = myAtan2d(ap,bp);
 Mp = hypot(ap,bp);
-M  = (exp(S.c2*Mp) - 1) / S.c2;
+M  = (exp(prm.c2*Mp) - 1) / prm.c2;
 %
 out = struct('J',J,'M',M,'h',h);
 out = structfun(@(v)reshape(v,isz), out, 'UniformOutput',false);
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Jab_to_CIECAM02
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CAM02UCS_to_CIECAM02
 function ang = myAtan2d(X,Y)
 ang = mod(180*atan2(Y,X)/pi,360);
 ang(Y==0 & X==0) = 0;
