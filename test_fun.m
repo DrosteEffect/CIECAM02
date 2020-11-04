@@ -3,7 +3,7 @@ function test_fun(out, fnh, varargin)
 %
 % (c) 2017-2020 Stephen Cobeldick
 %
-% See also TEST_CIECAM02 TEST_JAB
+% See also TEST_CAM02UCS TEST_CIECAM02
 
 if nargin==1
 	fprintf('Running @%s...\n',out);

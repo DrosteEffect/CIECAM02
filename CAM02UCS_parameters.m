@@ -1,56 +1,66 @@
-function S = Jab_parameters(K_L,c1,c2)
-% Parameter values to define the CAM02 Color Space (UCS/LCD/SCD).
+function prm = CAM02UCS_parameters(K_L,c1,c2)
+% Parameter values to define the CAM02 colorspace (UCS/LCD/SCD/etc.).
 %
 % (c) 2017-2020 Stephen Cobeldick
 %
 %%% Syntax:
-% S = Jab_parameters()
-% S = Jab_parameters(space)
-% S = Jab_parameters(K_L,c1,c2)
+% prm = CAM02UCS_parameters()
+% prm = CAM02UCS_parameters(space)
+% prm = CAM02UCS_parameters(K_L,c1,c2)
 %
 %% Input and Output Arguments %%
 %
 %%% Inputs (*==default):
 % space = CharRowVector, *'UCS'/'LCD'/'SCD' selects a standard CAM02 space:
 %         UniformColorSpace / LargeColorDifference / SmallColorDifference.
+%%% OR:
 % K_L = NumericScalar, CAM02 coefficient (lightness parameter).
 % c1  = NumericScalar, CAM02 coefficient (space constant).
 % c2  = NumericScalar, CAM02 coefficient (space constant).
 %
 %%% Output:
-% S = Scalar structure of CAM02 parameter values.
+% prm = Scalar structure of CAM02 colorspace parameter values.
 %
-% See also CIECAM02_TO_JAB JAB_TO_CIECAM02 SRGB_TO_JAB JAB_TO_SRGB CIECAM02_PARAMETERS
+% See also CIECAM02_PARAMETERS
+% CIECAM02_TO_CAM02UCS CAM02UCS_TO_CIECAM02 SRGB_TO_CAM02UCS CAM02UCS_TO_SRGB
 
+%% Input Wrangling %%
+%
 switch nargin
 	case 0
 		K_L = 'UCS';
 	case 1
-		assert(ischar(K_L),'Input can be a 1xN character.')
+		assert(ischar(K_L),...
+			'SC:CAM02UCS_parameters:NotCharVector',...
+			'If using only one input it must be a 1xN character.')
 	case 3
-		S.K_L = K_L; S.c1 = c1; S.c2 = c2;
+		prm.K_L = K_L; prm.c1 = c1; prm.c2 = c2;
 		K_L = '';
 	otherwise
-		error('Either one 1xN character, or three numeric inputs required.')
+		error('SC:CAM02UCS_parameters:InvalidInputs',...
+			'Either one 1xN character, or three numeric inputs are required.')
 end
+%
 switch upper(K_L)
 	case ''
-		idx = structfun(@(x)isnumeric(x)&&isscalar(x)&&isreal(x),S);
-		assert(all(idx),'All numeric inputs must be real numeric scalars.')
+		assert(all(structfun(@(x)isnumeric(x)&&isscalar(x)&&isreal(x),prm)),...
+			'SC:CAM02UCS_parameters:NotNumericScalars',...
+			'All numeric inputs must be real numeric scalars.')
 	case 'UCS'
-		S.K_L = 1.00; S.c1 = 0.007; S.c2 = 0.0228;
+		prm.K_L = 1.00; prm.c1 = 0.007; prm.c2 = 0.0228;
 	case 'LCD'
-		S.K_L = 0.77; S.c1 = 0.007; S.c2 = 0.0053;
+		prm.K_L = 0.77; prm.c1 = 0.007; prm.c2 = 0.0053;
 	case 'SCD'
-		S.K_L = 1.24; S.c1 = 0.007; S.c2 = 0.0363;
+		prm.K_L = 1.24; prm.c1 = 0.007; prm.c2 = 0.0363;
 	otherwise
-		error('Colorspace choice "%s" is not supported.',spc)
+		error('SC:CAM02UCS_parameters:UnknownColorspace',...
+			'The requested colorspace "%s" is not supported.',spc)
 end
 %
-S.name = mfilename();
+prm.name = mfilename();
 %
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Jab_parameters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CAM02UCS_parameters
 %
 % Copyright (c) 2017-2020 Stephen Cobeldick
 %

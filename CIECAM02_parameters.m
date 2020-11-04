@@ -1,11 +1,11 @@
-function S = CIECAM02_parameters(wp,Y_b,L_A,sur)
+function prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
 % Parameter values defined in the CIECAM02 model "Step 0".
 %
 % (c) 2017-2020 Stephen Cobeldick
 %
 %%% Syntax:
-% S = CIECAM02_parameters(wp,Y_b,L_A)
-% S = CIECAM02_parameters(wp,Y_b,L_A,sur)
+% prm = CIECAM02_parameters(wp,Y_b,L_A)
+% prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
 %
 %% Input and Output Arguments %%
 %
@@ -17,93 +17,98 @@ function S = CIECAM02_parameters(wp,Y_b,L_A,sur)
 %     = NumericVector, size 1x3, [F,c,N_c], CIECAM02 surround parameters.
 %
 %%% Output:
-% S = Scalar structure of CIECAM02 parameter values.
+% prm = Scalar structure of CIECAM02 parameter values.
 %
-% See also CIE_WHITEPOINT CIECAM02_TO_XYZ XYZ_TO_CIECAM02 SRGB_TO_JAB JAB_TO_SRGB JAB_PARAMETERS
+% See also CAM02UCS_PARAMETERS
+% CIEXYZ_TO_CIECAM02 CIECAM02_TO_CIEXYZ SRGB_TO_CAM02UCS CAM02UCS_TO_SRGB
 
 %% Input Wrangling %%
 %
-assert(isnumeric(L_A)&&isscalar(L_A)&&isreal(L_A),'SC:CIECAM02_parameters:NotScalarNumeric_L_a',...
+assert(isnumeric(L_A)&&isscalar(L_A)&&isreal(L_A),...
+	'SC:CIECAM02_parameters:L_a:NotScalarNumeric',...
 	'3rd input <L_a> must be a real scalar numeric.')
-assert(isnumeric(Y_b)&&isscalar(Y_b)&&isreal(Y_b),'SC:CIECAM02_parameters:NotScalarNumeric_Y_b',...
+assert(isnumeric(Y_b)&&isscalar(Y_b)&&isreal(Y_b),...
+	'SC:CIECAM02_parameters:Y_b:NotScalarNumeric',...
 	'2nd input <Y_b> must be a real scalar numeric.')
-assert(isnumeric(wp) &&numel(wp)==3 &&isreal(wp),'SC:CIECAM02_parameters:NotThreeNumeric_wp',...
+assert(isnumeric(wp)&&numel(wp)==3&&isreal(wp),...
+	'SC:CIECAM02_parameters:wp:NotThreeNumeric',...
 	'1st input <wp> must be 3 real values in a numeric vector.')
-err = 1e-4;
-assert(wp(2)>=(0-err)&wp(2)<=(1+err),'SC:CIECAM02_parameters:OutOfRangeY_wp',...
+assert(wp(2)>=0&wp(2)<=1,...
+	'SC:CIECAM02_parameters:wp:OutOfRange',...
 	'1st input <wp> must define the whitepoint scaled for Ymax==1')
 %
-S.XYZ_w = 100*wp(:).';
+prm.XYZ_w = 100*wp(:).';
 %
 if nargin<4
 	sur = 'average';
 end
 if isnumeric(sur)
-	assert(isreal(sur)&&numel(sur)==3,'SC:CIECAM02_parameters:NotThreeNumeric_sur',...
+	assert(isreal(sur)&&numel(sur)==3,...
+		'SC:CIECAM02_parameters:sur:NotThreeNumeric',...
 		'4th input <sur> can be a 1x3 numeric vector')
 	sur = double(sur);
-	S.F   = sur(1);
-	S.c   = sur(2);
-	S.N_c = sur(3);
+	prm.F   = sur(1);
+	prm.c   = sur(2);
+	prm.N_c = sur(3);
 elseif ischar(sur)&&isrow(sur)
 	switch lower(sur)
 		case 'average'
-			S.F   = 1.0;
-			S.c   = 0.690;
-			S.N_c = 1.00;
+			prm.F   = 1.0;
+			prm.c   = 0.690;
+			prm.N_c = 1.00;
 		case 'dim'
-			S.F   = 0.9;
-			S.c   = 0.590;
-			S.N_c = 0.90;
+			prm.F   = 0.9;
+			prm.c   = 0.590;
+			prm.N_c = 0.90;
 		case 'dark'
-			S.F   = 0.8;
-			S.c   = 0.525;
-			S.N_c = 0.80;
+			prm.F   = 0.8;
+			prm.c   = 0.525;
+			prm.N_c = 0.80;
 		otherwise
-			error('SC:CIECAM02_parameters:UnknownValue_sur',...
+			error('SC:CIECAM02_parameters:sur:UnknownValue',...
 				'4th input <sur> value "%s" is not supported.',sur)
 	end
 else
-	error('SC:CIECAM02_parameters:UnsupportedValue_sur',...
+	error('SC:CIECAM02_parameters:sur:UnsupportedValue',...
 		'Surround must be a char row vector or a numeric vector.')
 end
 %
 %% Matrices %%
 %
-S.M_CAT02 = [...
+prm.M_CAT02 = [...
 	+0.7328,+0.4296,-0.1624;...
 	-0.7036,+1.6975,+0.0061;...
 	+0.0030,+0.0136,+0.9834];
-S.M_HPE = [...
+prm.M_HPE = [...
 	+0.38971,+0.68898,-0.07868;...
 	-0.22981,+1.18340,+0.04641;...
 	+0      ,+0      ,+1      ];
 %
-S.h_i = [20.14;90.00;164.25;237.53;380.14];
-S.e_i = [0.8;0.7;1.0;1.2;0.8];
-S.H_i = [0;100;200;300;400];
+prm.h_i = [20.14;90.00;164.25;237.53;380.14];
+prm.e_i = [0.8;0.7;1.0;1.2;0.8];
+prm.H_i = [0;100;200;300;400];
 %
 %% Derive Parameters %%
 %
-S.LMS_w = S.XYZ_w * S.M_CAT02.';
-S.D = S.F .* (1-(1/3.6) .* exp(-(L_A+42)/92));
-S.D = max(0,min(1,S.D));
+prm.LMS_w = prm.XYZ_w * prm.M_CAT02.';
+prm.D = prm.F .* (1-(1/3.6) .* exp(-(L_A+42)/92));
+prm.D = max(0,min(1,prm.D));
 %
-S.LMS_c = S.D*S.XYZ_w(2) ./ S.LMS_w + 1 - S.D;
-S.LMSp_w = (S.LMS_c .* S.LMS_w) * (S.M_HPE / S.M_CAT02).';
+prm.LMS_c = prm.D*prm.XYZ_w(2) ./ prm.LMS_w + 1 - prm.D;
+prm.LMSp_w = (prm.LMS_c .* prm.LMS_w) * (prm.M_HPE / prm.M_CAT02).';
 % Michaelis-Mentis equation:
-S.k = 1 ./ (5*L_A+1);
-S.F_L = (S.k.^4 .* (5*L_A))/5 + ((1-S.k^4).^2 .* (5*L_A).^(1/3))/10;
-S.n = Y_b ./ S.XYZ_w(2);
-S.z = 1.48 + sqrt(S.n);
-S.N_bb = 0.725 * S.n.^(-1/5);
-S.N_cb = S.N_bb;
+prm.k = 1 ./ (5*L_A+1);
+prm.F_L = (prm.k.^4 .* (5*L_A))/5 + ((1-prm.k^4).^2 .* (5*L_A).^(1/3))/10;
+prm.n = Y_b ./ prm.XYZ_w(2);
+prm.z = 1.48 + sqrt(prm.n);
+prm.N_bb = 0.725 * prm.n.^(-1/5);
+prm.N_cb = prm.N_bb;
 %
-tmp = ((S.F_L .* S.LMSp_w)/100).^0.42;
-S.LMSp_aw = 400*(tmp ./ (27.13 + tmp)) + 0.1;
-S.A_w = (S.LMSp_aw * [2;1;1/20] - 0.305) * S.N_bb;
+tmp = ((prm.F_L .* prm.LMSp_w)/100).^0.42;
+prm.LMSp_aw = 400*(tmp ./ (27.13 + tmp)) + 0.1;
+prm.A_w = (prm.LMSp_aw * [2;1;1/20] - 0.305) * prm.N_bb;
 %
-S.name = mfilename();
+prm.name = mfilename();
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_parameters
