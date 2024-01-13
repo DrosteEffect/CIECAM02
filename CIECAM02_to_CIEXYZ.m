@@ -1,24 +1,24 @@
 function XYZ = CIECAM02_to_CIEXYZ(inp,prm)
 % Convert a structure of CIECAM02 values to an array of CIE 1931 XYZ values.
 %
-% (c) 2017-2020 Stephen Cobeldick
+% (c) 2017-2024 Stephen Cobeldick
 %
 %%% Syntax:
 % xyz = CIECAM02_to_CIEXYZ(inp,prm)
 %
 %% Example %%
 %
-% >> inp.J = 43.726007896909451;
-% >> inp.M = 52.493379855966843;
-% >> inp.h = 256.68767017409704;
+% >> inp.J = 43.7296094671109756;
+% >> inp.M = 52.4958873764575245;
+% >> inp.h = 256.695342232470466;
 % >> wp  = CIE_whitepoint('D65');
 % >> prm = CIECAM02_parameters(wp,20,64/pi/5,'average');
 % >> XYZ = CIECAM02_to_CIEXYZ(inp,prm)
 % XYZ =
-%     0.2788    0.2375    0.9770
+%      0.27884    0.23748    0.97722
 % >> rgb = CIEXYZ_to_sRGB(XYZ)*255
 % rgb =
-%    64.0000  128.0000  255.0000
+%      64.000     128.00     255.00
 %
 %% Input And Output Arguments %%
 %
@@ -51,8 +51,9 @@ fld = fieldnames(inp);
 tmp = numel(fld);
 fld = [fld{:}];
 assert((tmp>=3)&&(tmp<=7),...
-	'SC:CIECAM02_to_CIEXYZ:inp:MustHaveThreeFields',...
-	'1st input <inp> must have at least three fields: J, M, h.')
+	'SC:CIECAM02_to_CIEXYZ:inp:MustHaveThreeFields','%s\n',...
+	'1st input <inp> must have at least three fields, with',...
+	'one field from each group: [J|Q], [C|M|s], and [H|h].')
 assert(all(structfun(@(a)isnumeric(a)&&isreal(a),inp)),...
 	'SC:CIECAM02_to_CIEXYZ:inp:FieldsMustBeNumeric',...
 	'1st input <inp> fields must be real numeric arrays.')
@@ -178,7 +179,7 @@ XYZ = reshape(max(0,min(1,XYZ/100)),isz);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_to_CIEXYZ
 %
-% Copyright (c) 2017-2020 Stephen Cobeldick
+% Copyright (c) 2017-2024 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

@@ -1,17 +1,17 @@
 function rgb = CIEXYZ_to_sRGB(XYZ)
 % Convert an array of CIE 1931 XYZ values to sRGB values.
 %
-% (c) 2107-2020 Stephen Cobeldick
+% (c) 2107-2024 Stephen Cobeldick
 %
 %%% Syntax:
 % rgb = CIEXYZ_to_sRGB(XYZ)
 %
 %% Example %%
 %
-% >> XYZ = [0.278770472005685,0.237451735943392,0.977024183310834];
+% >> XYZ = [0.278835239474185759,0.237483316531782285,0.977220072160195796];
 % >> rgb = CIEXYZ_to_sRGB(XYZ)*255
 % rgb =
-%    64.0000  128.0000  255.0000
+%      64.000    128.00    255.00
 %
 %% Input And Output Arguments %%
 %
@@ -48,25 +48,32 @@ end
 %
 %% XYZ2RGB %%
 %
-M = [... High-precision sRGB to XYZ matrix:
-	0.4124564,0.3575761,0.1804375;...
-	0.2126729,0.7151522,0.0721750;...
-	0.0193339,0.1191920,0.9503041];
-rgb = max(0,min(1, sGammaCor(XYZ / M.')));
-% Remember to include my license when copying my implementation.
-rgb = reshape(rgb,isz);
+M = [... Standard sRGB to XYZ matrix:
+	0.4124,0.3576,0.1805;...
+	0.2126,0.7152,0.0722;...
+	0.0193,0.1192,0.9505];
+% source: IEC 61966-2-1:1999
+%
+% M = [... High-precision sRGB to XYZ matrix:
+% 	0.4124564,0.3575761,0.1804375;...
+% 	0.2126729,0.7151522,0.0721750;...
+% 	0.0193339,0.1191920,0.9503041];
+% source: <http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html>
+%
+rgb = sGammaCor(XYZ / M.');
+rgb = max(0,min(1,reshape(rgb,isz)));
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIEXYZ_to_sRGB
-function rgb = sGammaCor(rgb)
+function out = sGammaCor(inp)
 % Gamma correction of sRGB data.
-idx = rgb <= 0.0031308;
-rgb(idx) = 12.92 * rgb(idx);
-rgb(~idx) = real(1.055 * rgb(~idx).^(1/2.4) - 0.055);
+idx = inp > 0.0031308;
+out = 12.92 * inp;
+out(idx) = real(1.055 * inp(idx) .^ (1./2.4) - 0.055);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sGammaCor
 %
-% Copyright (c) 2017-2020 Stephen Cobeldick
+% Copyright (c) 2017-2024 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

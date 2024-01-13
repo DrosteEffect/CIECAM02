@@ -1,7 +1,7 @@
 function prm = CAM02UCS_parameters(K_L,c1,c2)
 % Parameter values to define the CAM02 colorspace (UCS/LCD/SCD/etc.).
 %
-% (c) 2017-2020 Stephen Cobeldick
+% (c) 2017-2024 Stephen Cobeldick
 %
 %%% Syntax:
 % prm = CAM02UCS_parameters()
@@ -10,9 +10,10 @@ function prm = CAM02UCS_parameters(K_L,c1,c2)
 %
 %% Input and Output Arguments %%
 %
-%%% Inputs (*==default):
-% space = CharRowVector, *'UCS'/'LCD'/'SCD' selects a standard CAM02 space:
-%         UniformColorSpace / LargeColorDifference / SmallColorDifference.
+%%% Inputs (**==default):
+% space = StringScalar or CharRowVector, one of the following:
+%         'LCD'/'SCD'/'UCS'**, which selects a predefined CAM02 space
+%         LargeColorDifference / SmallColorDifference / UniformColorSpace.
 %%% OR:
 % K_L = NumericScalar, CAM02 coefficient (lightness parameter).
 % c1  = NumericScalar, CAM02 coefficient (space constant).
@@ -28,41 +29,42 @@ function prm = CAM02UCS_parameters(K_L,c1,c2)
 %
 switch nargin
 	case 0
-		K_L = 'UCS';
+		prm = GetParam('UCS'); % default
 	case 1
-		assert(ischar(K_L),...
-			'SC:CAM02UCS_parameters:NotCharVector',...
-			'If using only one input it must be a 1xN character.')
+		prm = GetParam(K_L);
 	case 3
-		prm.K_L = K_L; prm.c1 = c1; prm.c2 = c2;
-		K_L = '';
-	otherwise
-		error('SC:CAM02UCS_parameters:InvalidInputs',...
-			'Either one 1xN character, or three numeric inputs are required.')
-end
-%
-switch upper(K_L)
-	case ''
+		prm.K_L = K_L;
+		prm.c1 =  c1;
+		prm.c2 =  c2;
 		assert(all(structfun(@(x)isnumeric(x)&&isscalar(x)&&isreal(x),prm)),...
 			'SC:CAM02UCS_parameters:NotNumericScalars',...
 			'All numeric inputs must be real numeric scalars.')
-	case 'UCS'
-		prm.K_L = 1.00; prm.c1 = 0.007; prm.c2 = 0.0228;
-	case 'LCD'
-		prm.K_L = 0.77; prm.c1 = 0.007; prm.c2 = 0.0053;
-	case 'SCD'
-		prm.K_L = 1.24; prm.c1 = 0.007; prm.c2 = 0.0363;
+		prm = structfun(@double,prm, 'UniformOutput',false);
 	otherwise
-		error('SC:CAM02UCS_parameters:UnknownColorspace',...
-			'The requested colorspace "%s" is not supported.',spc)
+		error('SC:CAM02UCS_parameters:InvalidInputs',...
+			'Either one text input, or three numeric inputs are required.')
 end
 %
 prm.name = mfilename();
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CAM02UCS_parameters
+function prm = GetParam(K_L)
+switch upper(K_L)
+	case 'UCS'
+		prm.K_L = 1.00;   prm.c1 = 0.007;   prm.c2 = 0.0228;
+	case 'LCD'
+		prm.K_L = 0.77;   prm.c1 = 0.007;   prm.c2 = 0.0053;
+	case 'SCD'
+		prm.K_L = 1.24;   prm.c1 = 0.007;   prm.c2 = 0.0363;
+	otherwise
+		error('SC:CAM02UCS_parameters:UnknownColorspace',...
+			'The requested colorspace "%s" is not supported.',spc)
+end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%GetParam
 %
-% Copyright (c) 2017-2020 Stephen Cobeldick
+% Copyright (c) 2017-2024 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

@@ -1,12 +1,11 @@
 function test_CAM02UCS()
 % Test CIECAM02_TO_CAM02UCS and CAM02UCS_TO_CIECAM02 against sample values.
 %
-% (c) 2017-2020 Stephen Cobeldick
+% (c) 2017-2024 Stephen Cobeldick
 %
 % See also TEST_FUN CIECAM02_TO_CAM02UCS CAM02UCS_TO_CIECAM02
 
-% Initialize test function:
-test_fun(mfilename())
+fprintf('Running @%s...\n',mfilename())
 %
 JMh = struct('J',50,'M',20,'h',10);
 Jab = [62.96296296,16.22742674,2.86133316];
@@ -66,7 +65,7 @@ test_fun(JMh, @CAM02UCS_to_CIECAM02, Jab, CAM02UCS_parameters('SCD'),     true)
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%test_CAM02UCS
 %
-% Copyright (c) 2017-2020 Stephen Cobeldick
+% Copyright (c) 2017-2024 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

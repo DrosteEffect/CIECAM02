@@ -1,35 +1,35 @@
 function Jab = CIECAM02_to_CAM02UCS(inp,prm,isd)
 % Convert a structure of CIECAM02 values to an array of CAM02 colorspace values.
 %
-% (c) 2017-2020 Stephen Cobeldick
+% (c) 2017-2024 Stephen Cobeldick
 %
 %%% Syntax:
 %  Jab = CIECAM02_to_CAM02UCS(inp,prm)
 %  Jab = CIECAM02_to_CAM02UCS(inp,prm,isd)
 %
 % If the output is being used for calculating the euclidean color distance
-% (i.e. deltaE) use isd=true, so that J' values are divided by K_L.
+% (i.e. deltaE) then specify isd=true, so that J' values are divided by K_L.
 %
 %% Example %%
 %
-% >> inp.J = 43.726007896909451;
-% >> inp.M = 52.493379855966843;
-% >> inp.h = 256.68767017409704;
+% >> inp.J = 43.7296094671109756;
+% >> inp.M = 52.4958873764575245;
+% >> inp.h = 256.695342232470466;
 % >> prm = CAM02UCS_parameters();
 % >> Jab = CIECAM02_to_CAM02UCS(inp,prm)
 % Jab =
-%    56.9139   -7.9482  -33.5911
+%    56.917   -7.9440  -33.593
 %
 %% Input and Output Arguments %%
 %
-%%% Inputs (*==default):
+%%% Inputs (**==default):
 % inp = Scalar structure of CIECAM02 J, M, and h values. Each field must
 %       have exactly the same size Nx1 or RxCx1. The fields encode:
 %       J = Lightness
 %       M = Colorfulness
 %       h = Hue Angle
 % prm = ScalarStructure of parameters from the function CAM02UCS_PARAMETERS.
-% isd = ScalarLogical, true/false* = euclidean distance/reference J' values.
+% isd = ScalarLogical, true/false** = euclidean distance/reference J' values.
 %
 %%% Outputs:
 % Jab = NumericArray of CAM02 colorspace values J'a'b'.
@@ -48,7 +48,7 @@ tmp = numel(fld);
 fld = [fld{:}]; %#ok<NASGU>
 assert((tmp>=3)&&(tmp<=7),...
 	'SC:CIECAM02_to_CAM02UCS:inp:MustHaveThreeFields',...
-	'1st input <inp> must have at least three fields (J, M, h).')
+	'1st input <inp> must have at least three fields: J, M, and h.')
 assert(all(structfun(@(a)isnumeric(a)&&isreal(a),inp)),...
 	'SC:CIECAM02_to_CAM02UCS:inp:FieldsMustBeNumeric',...
 	'1st input <inp> fields must be real numeric arrays.')
@@ -59,6 +59,10 @@ assert(isequal(tmp{:}),...
 isz = tmp{1};
 isz(max(2,find([isz==1,true],1,'first'))) = 3;
 %
+J = double(inp.J(:));
+M = double(inp.M(:));
+h = double(inp.h(:));
+%
 name = 'CAM02UCS_parameters';
 assert(isstruct(prm)&&isscalar(prm),...
 	'SC:CIECAM02_to_CAM02UCS:prm:NotScalarStruct',...
@@ -66,10 +70,6 @@ assert(isstruct(prm)&&isscalar(prm),...
 assert(strcmp(prm.name,name),...
 	'SC:CIECAM02_to_CAM02UCS:prm:UnknownStructOrigin',...
 	'2nd input <prm> must be the structure returned by "%s.m".',name)
-%
-J = double(inp.J(:));
-M = double(inp.M(:));
-h = double(inp.h(:));
 %
 %% JMh2Jab %%
 %
@@ -89,7 +89,7 @@ Jab = reshape([Jp,ap,bp],isz);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_to_CAM02UCS
 %
-% Copyright (c) 2017-2020 Stephen Cobeldick
+% Copyright (c) 2017-2024 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

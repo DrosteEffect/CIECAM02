@@ -8,12 +8,12 @@ function XYZ = CIE_whitepoint(obs)
 %
 % >> CIE_whitepoint('D65')
 % ans =
-%       0.9505   1.0000   1.0888
+%      0.95047    1.0000    1.0888
 %
 %% Input and Output Arguments %%
 %
 %%% Input:
-% obs = CharRowVector, the name of the illuminant, e.g. 'D65' (the sRGB standard).
+% obs = StringScalar or CharRowVector, the name of the illuminant.
 %       Optional prefix specifies 2 or 10 degree, e.g. '2D50' or '10D50'.  
 %
 %%% Output:
@@ -22,11 +22,9 @@ function XYZ = CIE_whitepoint(obs)
 % See also CIECAM02_PARAMETERS CAM02UCS_PARAMETERS
 % CIEXYZ_TO_CIECAM02 CIECAM02_TO_CIEXYZ SRGB_TO_CAM02UCS CAM02UCS_TO_SRGB
 
-assert(ischar(obs),...
-	'SC:CIE_whitepoint:obs:NotCharacter',...
-	'Input <obs> must be a character vector.')
-%
 switch upper(obs)
+	case 'ICC'
+		XYZ = [31595,32768,27030]/32768;
 	case {'A','2A'}
 		XYZ = [1.09850,1,0.35585];
 	case {'C','2C'}

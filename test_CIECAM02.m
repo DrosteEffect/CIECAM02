@@ -1,12 +1,11 @@
 function test_CIECAM02()
 % Test CIECAM02_TO_CIEXYZ and CIECIEXYZ_TO_CIECAM02 against sample values.
 %
-% (c) 2017-2020 Stephen Cobeldick
+% (c) 2017-2024 Stephen Cobeldick
 %
 % See also TEST_FUN CIECAM02_TO_CIEXYZ CIECIEXYZ_TO_CIECAM02
 
-% Initialize test function:
-test_fun(mfilename())
+fprintf('Running @%s...\n',mfilename())
 %
 % Source: values apparently taken from CIE 159:2004 Section 9, available at:
 % https://github.com/igd-geo/pcolor/blob/master/de.fhg.igd.pcolor.test/src/de/fhg/igd/pcolor/test/CAMWorkedExample.java
@@ -104,7 +103,7 @@ S = struct(C{:});
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%mkStruct
 %
-% Copyright (c) 2017-2020 Stephen Cobeldick
+% Copyright (c) 2017-2024 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

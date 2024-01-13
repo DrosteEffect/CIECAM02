@@ -22,10 +22,10 @@ for MatPlotLib 2.0. These colormaps are also available for MATLAB here:
 
 https://www.mathworks.com/matlabcentral/fileexchange/62729-matplotlib-2-0-colormaps--perceptually-uniform-and-beautiful
 
-My goal was to provide functionality as simple as the commonly used Lab
+My goal was to provide functionality as simple as the commonly used CIELab
 colorspace conversions, whilst providing a much more perceptually uniform
 colorspace. Note that I replaced calculations with a matrix inverse, e.g.
-inv(A)*b, with the recommended and numerically more precise A\b. See:
+inv(A)*b, with the recommended and numerically more precise A\b:
 
 https://www.mathworks.com/help/matlab/ref/inv.html
 

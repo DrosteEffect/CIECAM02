@@ -1,7 +1,7 @@
 function out = CIEXYZ_to_CIECAM02(XYZ,prm,isn)
 % Convert an array of CIE 1931 XYZ values to a structure of CIECAM02 values.
 %
-% (c) 2017-2020 Stephen Cobeldick
+% (c) 2017-2024 Stephen Cobeldick
 %
 %%% Syntax:
 % out = CIEXYZ_to_CIECAM02(XYZ,prm)
@@ -9,29 +9,26 @@ function out = CIEXYZ_to_CIECAM02(XYZ,prm,isn)
 %
 %% Example %%
 %
-% >> rgb = [64,128,255]/255;
-% >> XYZ = sRGB_to_CIEXYZ(rgb)
-% XYZ =
-%     0.2788    0.2375    0.9770
+% >> XYZ = [0.278835239474185759,0.237483316531782285,0.977220072160195796];
 % >> wp  = CIE_whitepoint('D65');
 % >> prm = CIECAM02_parameters(wp,20,64/pi/5,'average');
 % >> out = CIEXYZ_to_CIECAM02(XYZ,prm)
 % out =
-%     J:  43.7260
-%     Q:  81.7957
-%     C:  72.6126
-%     M:  52.4934
-%     s:  80.1100
-%     H: 309.3756
-%     h: 256.6877
+%     J:  43.730
+%     Q:  81.799
+%     C:  72.616
+%     M:  52.496
+%     s:  80.110
+%     H: 309.38
+%     h: 256.70
 %
 %% Input And Output Arguments %%
 %
-%%% Inputs (*==default):
+%%% Inputs (**==default):
 % XYZ = NumericArray, tristimulus values to convert, 1931 XYZ colorspace (Ymax==1).
 %       Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values.
 % prm = Scalar structure of parameters from CIECAM02_PARAMETERS.
-% isn = *true/false -> negative A values are converted to NaNs/zeros.
+% isn = false/true** -> negative A values are converted to zeros/NaNs.
 %
 %%% Outputs:
 % out = a scalar structure with numeric fields of size Nx1 or RxCx1, with
@@ -116,7 +113,7 @@ H = prm.H_i(idx) + (100*tmp) ./ (tmp + (prm.h_i(idx+1)-hp) ./ prm.e_i(idx+1));
 %%% Step 7: achromatic response:
 %
 A = (LMSp_a*[2;1;1/20] - 0.305) .* prm.N_bb;
-A(A<0) = 0 / ~(nargin<6 || isn);
+A(A<0) = 0 / ~(nargin<3 || isn);
 %
 %%% Step 8: correlate of lightness:
 %
@@ -140,7 +137,7 @@ out = structfun(@(v)reshape(v,isz), out, 'UniformOutput',false);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIEXYZ_to_CIECAM02
 %
-% Copyright (c) 2017-2020 Stephen Cobeldick
+% Copyright (c) 2017-2024 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

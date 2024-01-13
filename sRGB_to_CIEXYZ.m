@@ -1,7 +1,7 @@
 function XYZ = sRGB_to_CIEXYZ(rgb)
 % Convert an array of sRGB values to CIE 1931 XYZ values.
 %
-% (c) 2107-2020 Stephen Cobeldick
+% (c) 2107-2024 Stephen Cobeldick
 %
 %%% Syntax:
 % XYZ = sRGB_to_CIEXYZ(rgb)
@@ -11,7 +11,7 @@ function XYZ = sRGB_to_CIEXYZ(rgb)
 % >> rgb = [64,128,255]/255;
 % >> XYZ = sRGB_to_CIEXYZ(rgb)
 % XYZ =
-%     0.2788    0.2375    0.9770
+%      0.27884    0.23748    0.97722
 %
 %% Input And Output Arguments %%
 %
@@ -44,25 +44,32 @@ end
 %
 %% RGB2XYZ %%
 %
-M = [... High-precision sRGB to XYZ matrix:
-	0.4124564,0.3575761,0.1804375;...
-	0.2126729,0.7151522,0.0721750;...
-	0.0193339,0.1191920,0.9503041];
+M = [... Standard sRGB to XYZ matrix:
+	0.4124,0.3576,0.1805;...
+	0.2126,0.7152,0.0722;...
+	0.0193,0.1192,0.9505];
+% source: IEC 61966-2-1:1999
+%
+% M = [... High-precision sRGB to XYZ matrix:
+% 	0.4124564,0.3575761,0.1804375;...
+% 	0.2126729,0.7151522,0.0721750;...
+% 	0.0193339,0.1191920,0.9503041];
+% source: <http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html>
+%
 XYZ = sGammaInv(rgb) * M.';
-% Remember to include my license when copying my implementation.
-XYZ = reshape(max(0,min(1,XYZ)),isz);
+XYZ = max(0,min(1,reshape(XYZ,isz)));
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sRGB_to_CIEXYZ
-function rgb = sGammaInv(rgb)
-% Inverse gamma transform of sRGB data.
-idx = rgb <= 0.04045;
-rgb(idx) = rgb(idx) / 12.92;
-rgb(~idx) = real(((rgb(~idx) + 0.055) / 1.055).^2.4);
+function out = sGammaInv(inp)
+% Inverse gamma correction: Nx3 sRGB -> Nx3 linear RGB.
+idx = inp > 0.04045;
+out = inp / 12.92;
+out(idx) = real(((inp(idx) + 0.055) ./ 1.055) .^ 2.4);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sGammaInv
 %
-% Copyright (c) 2017-2020 Stephen Cobeldick
+% Copyright (c) 2017-2024 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

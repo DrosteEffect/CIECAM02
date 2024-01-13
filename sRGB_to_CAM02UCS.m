@@ -1,7 +1,7 @@
 function Jab = sRGB_to_CAM02UCS(rgb,isd,varargin)
 % Convert an array of sRGB values to perceptually uniform CAM02 values.
 %
-% (c) 2017-2020 Stephen Cobeldick
+% (c) 2017-2024 Stephen Cobeldick
 %
 %%% Syntax:
 %  Jab = sRGB_to_CAM02UCS(rgb)
@@ -10,14 +10,14 @@ function Jab = sRGB_to_CAM02UCS(rgb,isd,varargin)
 %  Jab = sRGB_to_CAM02UCS(rgb,isd,K_L,c1,c2)
 %
 % If the output is being used for calculating the euclidean color distance
-% (i.e. deltaE) use isd=true, so that J' values are divided by K_L.
+% (i.e. deltaE) then specify isd=true, so that J' values are divided by K_L.
 %
 %% Examples %%
 %
 % >> rgb = [64,128,255]/255;
 % >> Jab = sRGB_to_CAM02UCS(rgb)
 % Jab =
-%    56.9139   -7.9482  -33.5911
+%      56.917    -7.9440    -33.593
 %
 %% Input and Output Arguments %%
 %
@@ -25,15 +25,16 @@ function Jab = sRGB_to_CAM02UCS(rgb,isd,varargin)
 % rgb = NumericArray of RGB values, scaled so that 0<=rgb<=1.
 %       Size Nx3 or RxCx3, the last dimension encodes the R,G,B values.
 % isd = ScalarLogical, true/false* = euclidean distance/reference J' values.
-% space = CharRowVector, *'UCS'/'LCD'/'SCD' selects a standard CAM02 space:
-%         UniformColorSpace / LargeColorDifference / SmallColorDifference.
+% space = StringScalar or CharRowVector, one of the following:
+%         'LCD'/'SCD'/'UCS'**, which selects a predefined CAM02 space
+%         LargeColorDifference / SmallColorDifference / UniformColorSpace.
 %
 %%% Outputs:
 % Jab = NumericArray of CAM02 colorspace values J'a'b'.
 %       The same size as <rgb>, the last dimension encodes the J',a',b' values.
 %
-% See also CAM02UCS_TO_SRGB CAM02UCS_PARAMETERS CIECAM02_PARAMETERS CIE_WHITEPOINT
-% CAM02UCS_TO_CIECAM02 SRGB_TO_CIEXYZ
+% See also CAM02UCS_TO_SRGB CAM02UCS_PARAMETERS CIECAM02_PARAMETERS
+% CIE_WHITEPOINT CAM02UCS_TO_CIECAM02 SRGB_TO_CIEXYZ MAXDISTCOLOR
 
 %% Input Wrangling %%
 %
@@ -52,7 +53,7 @@ Jab = reshape(Jab,isz);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sRGB_to_CAM02UCS
 %
-% Copyright (c) 2017-2020 Stephen Cobeldick
+% Copyright (c) 2017-2024 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

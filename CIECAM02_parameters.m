@@ -1,7 +1,7 @@
 function prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
 % Parameter values defined in the CIECAM02 model "Step 0".
 %
-% (c) 2017-2020 Stephen Cobeldick
+% (c) 2017-2024 Stephen Cobeldick
 %
 %%% Syntax:
 % prm = CIECAM02_parameters(wp,Y_b,L_A)
@@ -9,11 +9,11 @@ function prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
 %
 %% Input and Output Arguments %%
 %
-%%% Inputs (*==default):
+%%% Inputs (**==default):
 % wp  = NumericVector, whitepoint XYZ values [Xw,Yw,Zw], 1931 XYZ colorspace (Ymax==1).
 % Y_b = NumericScalar, relative luminance of reference white in the adapting field.
 % L_A = NumericScalar, adapting field luminance (cd/m^2).
-% sur = CharRowVector, one of *'average'/'dim'/'dark'.
+% sur = CharRowVector, one of 'dim'/'dark'/'average'**.
 %     = NumericVector, size 1x3, [F,c,N_c], CIECAM02 surround parameters.
 %
 %%% Output:
@@ -37,7 +37,10 @@ assert(wp(2)>=0&wp(2)<=1,...
 	'SC:CIECAM02_parameters:wp:OutOfRange',...
 	'1st input <wp> must define the whitepoint scaled for Ymax==1')
 %
-prm.XYZ_w = 100*wp(:).';
+prm.XYZ_w = 100*double(reshape(wp,1,[]));
+%
+Y_b = double(Y_b);
+L_A = double(L_A);
 %
 if nargin<4
 	sur = 'average';
@@ -50,27 +53,18 @@ if isnumeric(sur)
 	prm.F   = sur(1);
 	prm.c   = sur(2);
 	prm.N_c = sur(3);
-elseif ischar(sur)&&isrow(sur)
-	switch lower(sur)
-		case 'average'
-			prm.F   = 1.0;
-			prm.c   = 0.690;
-			prm.N_c = 1.00;
-		case 'dim'
-			prm.F   = 0.9;
-			prm.c   = 0.590;
-			prm.N_c = 0.90;
-		case 'dark'
-			prm.F   = 0.8;
-			prm.c   = 0.525;
-			prm.N_c = 0.80;
+else
+	switch upper(sur)
+		case 'AVERAGE'
+			prm.F = 1.0;   prm.c = 0.690;   prm.N_c = 1.00;
+		case 'DIM'
+			prm.F = 0.9;   prm.c = 0.590;   prm.N_c = 0.90;
+		case 'DARK'
+			prm.F = 0.8;   prm.c = 0.525;   prm.N_c = 0.80;
 		otherwise
 			error('SC:CIECAM02_parameters:sur:UnknownValue',...
 				'4th input <sur> value "%s" is not supported.',sur)
 	end
-else
-	error('SC:CIECAM02_parameters:sur:UnsupportedValue',...
-		'Surround must be a char row vector or a numeric vector.')
 end
 %
 %% Matrices %%
@@ -113,7 +107,7 @@ prm.name = mfilename();
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_parameters
 %
-% Copyright (c) 2017-2020 Stephen Cobeldick
+% Copyright (c) 2017-2024 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.
