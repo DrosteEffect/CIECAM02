@@ -16,49 +16,47 @@ function rgb = CIEXYZ_to_sRGB(XYZ)
 %% Input And Output Arguments %%
 %
 %%% Input
-% XYZ = NumericArray, tristimulus values to convert, scaled 1931 XYZ colorspace (Ymax==1).
+% XYZ = Double/single array of tristimulus values to convert. Values 
+%       defined by the 1931 XYZ colorspace, scaled such that Ymax==1.
 %       Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values.
 %
 %%% Output
-% rgb = NumericArray, the sRGB values, scaled from 0 to 1.
-%       Same size as <XYZ>, the last dimension encodes the R,G,B values.
+% rgb = Array of sRGB values, scaled from 0 to 1. The same
+%       class & size as <XYZ>, the last dimension encodes the R,G,B values.
 %
 % See also SRGB_TO_CIEXYZ CIEXYZ_TO_CIECAM02 SRGB_TO_CAM02UCS
 
 %% Input Wrangling %%
 %
 isz = size(XYZ);
-assert(isnumeric(XYZ),...
-	'SC:CIEXYZ_to_sRGB:XYZ:NotNumeric',...
-	'1st input <XYZ> must be a numeric array.')
+assert(isfloat(XYZ),...
+	'SC:CIEXYZ_to_sRGB:XYZ:NotFloat',...
+	'1st input <XYZ> must be a floating point array.')
 assert(isreal(XYZ),...
-	'SC:CIEXYZ_to_sRGB:XYZ:ComplexValue',...
-	'1st input <XYZ> cannot be complex.')
+	'SC:CIEXYZ_to_sRGB:XYZ:NotReal',...
+	'1st input <XYZ> must be a real array (not complex).')
 assert(isz(end)==3,...
 	'SC:CIEXYZ_to_sRGB:XYZ:InvalidSize',...
 	'1st input <XYZ> last dimension must have size 3 (e.g. Nx3 or RxCx3).')
 XYZ = reshape(XYZ,[],3);
 assert(all(XYZ(:,2)>=0&XYZ(:,2)<=1),...
-	'SC:CIEXYZ_to_sRGB:XYZ:OutOfRange',...
+	'SC:CIEXYZ_to_sRGB:XYZ:OutOfRangeY',...
 	'Input <XYZ> values must be scaled so 0<=Y<=1')
-%
-if ~isfloat(XYZ)
-	XYZ = double(XYZ);
-end
 %
 %% XYZ2RGB %%
 %
-M = [... Standard sRGB to XYZ matrix:
+M = [... IEC 61966-2-1:1999
 	0.4124,0.3576,0.1805;...
 	0.2126,0.7152,0.0722;...
 	0.0193,0.1192,0.9505];
-% source: IEC 61966-2-1:1999
-%
-% M = [... High-precision sRGB to XYZ matrix:
+% M = [... Derived from ITU-R BT.709-6
+%    0.412390799265959,0.357584339383878,0.180480788401834;...
+%    0.212639005871510,0.715168678767756,0.072192315360734;...
+%    0.019330818715592,0.119194779794626,0.950532152249661];
+% M = [... <http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html>
 % 	0.4124564,0.3575761,0.1804375;...
 % 	0.2126729,0.7151522,0.0721750;...
 % 	0.0193339,0.1191920,0.9503041];
-% source: <http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html>
 %
 rgb = sGammaCor(XYZ / M.');
 rgb = max(0,min(1,reshape(rgb,isz)));

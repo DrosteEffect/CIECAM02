@@ -40,7 +40,7 @@ is easy with these convenience functions (aka |rgb2jab| and |jab2lab|):
     rgb = CAM02UCS_to_sRGB(Jab)
 
 These use default values that are appropriate for sRGB (D65 illuminant, etc),
-and the CAM02-UCS colorspace (option to select SCD, LCD, etc. colorspaces).
+and the CAM02-UCS colorspace (option to select SCD, LCD, or UCS colorspaces).
 Note that the sRGB inputs are MATLAB standard float values 0<=rgb<=1.
 
 Other Conversions

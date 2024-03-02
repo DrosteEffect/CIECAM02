@@ -25,7 +25,8 @@ function XYZ = CIECAM02_to_CIEXYZ(inp,prm)
 %%% Inputs:
 % inp = Scalar structure of the CIECAM02 values, with one field from each
 %       of these three groups: [J|Q], [C|M|s], and [H|h]. Each field must
-%       have exactly the same size Nx1 or RxCx1. The fields encode:
+%       have exactly the same size Nx1 or RxCx1. The fields must be
+%       all double or all single. The fields encode:
 %       J = Lightness
 %       Q = Brightness
 %       C = Chroma
@@ -36,8 +37,9 @@ function XYZ = CIECAM02_to_CIEXYZ(inp,prm)
 % prm = Scalar structure of parameters from CIECAM02_PARAMETERS.
 %
 %%% Outputs:
-% XYZ = NumericArray, tristimulus values, in 1931 XYZ colorspace (Ymax==1).
-%       Size Nx3 or RxCx3, the last dimension encodes the XYZ values.
+% XYZ = Numeric array of converted tristimulus values, values 
+%       defined by the 1931 XYZ colorspace, scaled such that Ymax==1.
+%       Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values.
 %
 % See also CIEXYZ_TO_CIECAM02 CIEXYZ_TO_SRGB CIECAM02_TO_CAM02UCS
 % CIECAM02_PARAMETERS
@@ -47,19 +49,19 @@ function XYZ = CIECAM02_to_CIEXYZ(inp,prm)
 assert(isstruct(inp)&&isscalar(inp),...
 	'SC:CIECAM02_to_CIEXYZ:inp:NotScalarStruct',...
 	'1st input <inp> must be a scalar structure.')
-fld = fieldnames(inp);
-tmp = numel(fld);
-fld = [fld{:}];
-assert((tmp>=3)&&(tmp<=7),...
-	'SC:CIECAM02_to_CIEXYZ:inp:MustHaveThreeFields','%s\n',...
-	'1st input <inp> must have at least three fields, with',...
-	'one field from each group: [J|Q], [C|M|s], and [H|h].')
-assert(all(structfun(@(a)isnumeric(a)&&isreal(a),inp)),...
-	'SC:CIECAM02_to_CIEXYZ:inp:FieldsMustBeNumeric',...
-	'1st input <inp> fields must be real numeric arrays.')
+assert(all(structfun(@isfloat,inp)),...
+	'SC:CIECAM02_to_CIEXYZ:inp:FieldsAreNotFloat',...
+	'1st input <inp> fields must be floating point arrays.')
+assert(all(structfun(@isreal,inp)),...
+	'SC:CIECAM02_to_CIEXYZ:inp:FieldsAreNotReal',...
+	'1st input <inp> fields must be real arrays (not complex).')
+tmp = structfun(@(a){class(a)},inp);
+assert(isequal(tmp{:}),...
+	'SC:CIECAM02_to_CIEXYZ:inp:FieldsAreNotSameClass',...
+	'1st input <inp> fields must be arrays of the same class.')
 tmp = structfun(@(a){size(a)},inp);
 assert(isequal(tmp{:}),...
-	'SC:CIECAM02_to_CIEXYZ:inp:FieldsMustBeSameSize',...
+	'SC:CIECAM02_to_CIEXYZ:inp:FieldsAreNotSameSize',...
 	'1st input <inp> fields must be arrays of the same size.')
 isz = tmp{1};
 isz(max(2,find([isz==1,true],1,'first'))) = 3;
@@ -76,49 +78,49 @@ assert(strcmp(prm.name,name),...
 %
 %%% Step 1:
 %
-switch true % goal: lightness (J):
-	case any(fld=='J')
-		J = double(inp.J(:));
-	case any(fld=='Q')
-		Q = double(inp.Q(:));
-		J = 6.25 * ((prm.c .* Q) ./ ((prm.A_w+4) * sqrt(sqrt(prm.F_L)))).^2;
-	otherwise
-		error('SC:CIECAM02_to_CIEXYZ:inp:MissingJQ',...
-			'Input <inp> must contain one field "J" or "Q".')
+% Goal: lightness (J):
+if isfield(inp,'J')
+	J = inp.J(:);
+elseif isfield(inp,'Q')
+	Q = inp.Q(:);
+	J = 6.25 * ((prm.c .* Q) ./ ((prm.A_w+4) * sqrt(sqrt(prm.F_L)))).^2;
+else
+	error('SC:CIECAM02_to_CIEXYZ:inp:MissingField_J_Q',...
+		'Input <inp> must contain the field "J" or "Q".')
 end
 %
-switch true % goal: chroma (C):
-	case any(fld=='C')
-		C = double(inp.C(:));
-	case any(fld=='M')
-		C = double(inp.M(:)) ./ sqrt(sqrt(prm.F_L));
-	case any(fld=='s')
-		if any(fld=='J')
-			Q = (4./prm.c) .* sqrt(J/100) .* (prm.A_w+4) .* sqrt(sqrt(prm.F_L));
-		end
-		C = (double(inp.s(:)) / 100).^2 * (Q ./ sqrt(sqrt(prm.F_L)));
-	otherwise
-		error('SC:CIECAM02_to_CIEXYZ:inp:MissingCMs',...
-			'Input <inp> must contain one field "C" or "M" or "s".')
+% Goal: chroma (C):
+if isfield(inp,'C')
+	C = inp.C(:);
+elseif isfield(inp,'M')
+	C = inp.M(:) ./ sqrt(sqrt(prm.F_L));
+elseif isfield(inp,'s')
+	if isfield(inp,'J')
+		Q = (4./prm.c) .* sqrt(J/100) .* (prm.A_w+4) .* sqrt(sqrt(prm.F_L));
+	end
+	C = (inp.s(:) / 100).^2 * (Q ./ sqrt(sqrt(prm.F_L)));
+else
+	error('SC:CIECAM02_to_CIEXYZ:inp:MissingField_C_M_s',...
+		'Input <inp> must contain the field "C" or "M" or "s".')
 end
 %
-switch true % goal: hue angle (h):
-	case any(fld=='h')
-		h = double(inp.h(:));
-	case any(fld=='H')
-		H = double(inp.H(:));
-		tmp = bsxfun(@le,prm.H_i,H.');
-		tmp = flipud(cumsum(flipud(tmp),1))==1;
-		[idx,~] = find(tmp);
-		dH = (H - prm.H_i(idx));
-		nom = dH .* (prm.e_i(idx+1).*prm.h_i(idx) - prm.e_i(idx).*prm.h_i(idx+1))...
-			- 100 .* prm.e_i(idx+1) .* prm.h_i(idx);
-		den = dH .* (prm.e_i(idx+1)-prm.e_i(idx))...
-			- 100 .* prm.e_i(idx+1);
-		h = mod(nom./den, 360);
-	otherwise
-		error('SC:CIECAM02_to_CIEXYZ:inp:MissingHh',...
-			'Input <inp> must contain one field "h" or "H".')
+% Goal: hue angle (h):
+if isfield(inp,'h')
+	h = inp.h(:);
+elseif isfield(inp,'H')
+	H = inp.H(:);
+	tmp = bsxfun(@le,prm.H_i,H.');
+	tmp = flipud(cumsum(flipud(tmp),1))==1;
+	[idx,~] = find(tmp);
+	dH = (H - prm.H_i(idx));
+	nom = dH .* (prm.e_i(idx+1).*prm.h_i(idx) - prm.e_i(idx).*prm.h_i(idx+1))...
+		- 100 .* prm.e_i(idx+1) .* prm.h_i(idx);
+	den = dH .* (prm.e_i(idx+1)-prm.e_i(idx))...
+		- 100 .* prm.e_i(idx+1);
+	h = mod(nom./den, 360);
+else
+	error('SC:CIECAM02_to_CIEXYZ:inp:MissingField_H_h',...
+		'Input <inp> must contain the field "h" or "H".')
 end
 %
 %%% Step 2:

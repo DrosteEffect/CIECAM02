@@ -7,6 +7,7 @@ function test_CAM02UCS()
 
 fprintf('Running @%s...\n',mfilename())
 %
+% Source: colorspacious/gold_values.py
 JMh = struct('J',50,'M',20,'h',10);
 Jab = [62.96296296,16.22742674,2.86133316];
 K_L=1.00; c1=0.007; c2=0.0228; % UCS
@@ -18,6 +19,7 @@ test_fun(JMh, @CAM02UCS_to_CIECAM02, Jab, CAM02UCS_parameters(K_L,c1,c2))
 test_fun(JMh, @CAM02UCS_to_CIECAM02, Jab, CAM02UCS_parameters('UCS'))
 test_fun(JMh, @CAM02UCS_to_CIECAM02, Jab, CAM02UCS_parameters())
 %
+% Source: colorspacious/gold_values.py
 JMh = struct('J',10,'M',60,'h',100);
 Jab = [15.88785047,-6.56546789,37.23461867];
 %
@@ -28,6 +30,7 @@ test_fun(JMh, @CAM02UCS_to_CIECAM02, Jab, CAM02UCS_parameters(K_L,c1,c2))
 test_fun(JMh, @CAM02UCS_to_CIECAM02, Jab, CAM02UCS_parameters('UCS'))
 test_fun(JMh, @CAM02UCS_to_CIECAM02, Jab, CAM02UCS_parameters())
 %
+% Source: colorspacious/gold_values.py
 JMh = struct('J',50,'M',20,'h',10);
 Jab = [81.77008177,18.72061994,3.30095039];
 K_L=0.77; c1=0.007; c2=0.0053; % LCD
@@ -37,6 +40,7 @@ test_fun(Jab, @CIECAM02_to_CAM02UCS, JMh, CAM02UCS_parameters('LCD'),     true)
 test_fun(JMh, @CAM02UCS_to_CIECAM02, Jab, CAM02UCS_parameters(K_L,c1,c2), true)
 test_fun(JMh, @CAM02UCS_to_CIECAM02, Jab, CAM02UCS_parameters('LCD'),     true)
 %
+% Source: colorspacious/gold_values.py
 JMh = struct('J',10,'M',60,'h',100);
 Jab = [20.63357204,-9.04659289,51.30577777];
 %
@@ -45,6 +49,7 @@ test_fun(Jab, @CIECAM02_to_CAM02UCS, JMh, CAM02UCS_parameters('LCD'),     true)
 test_fun(JMh, @CAM02UCS_to_CIECAM02, Jab, CAM02UCS_parameters(K_L,c1,c2), true)
 test_fun(JMh, @CAM02UCS_to_CIECAM02, Jab, CAM02UCS_parameters('LCD'),     true)
 %
+% Source: colorspacious/gold_values.py
 JMh = struct('J',50,'M',20,'h',10);
 Jab = [50.77658303,14.80756375,2.61097301];
 K_L=1.24; c1=0.007; c2=0.0363; % SCD
@@ -54,6 +59,7 @@ test_fun(Jab, @CIECAM02_to_CAM02UCS, JMh, CAM02UCS_parameters('SCD'),     true)
 test_fun(JMh, @CAM02UCS_to_CIECAM02, Jab, CAM02UCS_parameters(K_L,c1,c2), true)
 test_fun(JMh, @CAM02UCS_to_CIECAM02, Jab, CAM02UCS_parameters('SCD'),     true)
 %
+% Source: colorspacious/gold_values.py
 JMh = struct('J',10,'M',60,'h',100);
 Jab = [12.81278263,-5.5311588,31.36876036];
 %

@@ -23,14 +23,14 @@ function out = CAM02UCS_to_CIECAM02(Jab,prm,isd)
 %% Input and Output Arguments %%
 %
 %%% Inputs (**==default):
-% Jab = NumericArray, CAM02 perceptually uniform colorspace values J',a',b'.
+% Jab = Double/single array, CAM02 perceptually uniform colorspace values J',a',b'.
 %       Size Nx3 or RxCx3, the last dimension encodes the J'a'b' values.
 % prm = ScalarStructure of parameters from the function CAM02UCS_PARAMETERS.
 % isd = ScalarLogical, true/false** = euclidean distance/reference J' values.
 %
 %%% Outputs:
-% out = ScalarStructure of CIECAM02 J, M, and h values. Each field
-%       has exactly the same size Nx1 or RxCx1. The fields encode:
+% out = ScalarStructure of CIECAM02 J, M, and h values. Each field has the
+%       class of <Jab>, and either size Nx1 or RxCx1. The fields encode:
 %       J = Lightness
 %       M = Colorfulness
 %       h = Hue Angle
@@ -41,21 +41,18 @@ function out = CAM02UCS_to_CIECAM02(Jab,prm,isd)
 %% Input Wrangling %%
 %
 isz = size(Jab);
-assert(isnumeric(Jab),...
-	'SC:CAM02UCS_to_CIECAM02:Jab:NotNumeric',...
-	'1st input <Jab> must be a numeric array.')
+assert(isfloat(Jab),...
+	'SC:CAM02UCS_to_CIECAM02:Jab:NotFloat',...
+	'1st input <Jab> must be a floating point array.')
 assert(isreal(Jab),...
-	'SC:CAM02UCS_to_CIECAM02:Jab:ComplexValue',...
-	'1st input <Jab> cannot be complex.')
+	'SC:CAM02UCS_to_CIECAM02:Jab:NotReal',...
+	'1st input <Jab> must be a real array (not complex).')
 assert(isz(end)==3,...
 	'SC:CAM02UCS_to_CIECAM02:Jab:InvalidSize',...
 	'1st input <Jab> last dimension must have size 3 (e.g. Nx3 or RxCx3).')
 isz(end) = 1;
 %
 Jab = reshape(Jab,[],3);
-if ~isfloat(Jab)
-	Jab = double(Jab);
-end
 %
 Jp = Jab(:,1);
 ap = Jab(:,2);

@@ -22,7 +22,7 @@ function rgb = CAM02UCS_to_sRGB(Jab,isd,varargin)
 %% Input and Output Arguments %%
 %
 %%% Inputs (**==default):
-% Jab   = NumericArray, CAM02 perceptually uniform colorspace values J'a'b'.
+% Jab   = Double/single array, CAM02 perceptually uniform colorspace values J'a'b'.
 %         Size Nx3 or RxCx3, the last dimension encodes the J',a',b' values.
 % isd   = ScalarLogical, true/false** = euclidean distance/reference J' values.
 % space = StringScalar or CharRowVector, one of the following:
@@ -30,8 +30,8 @@ function rgb = CAM02UCS_to_sRGB(Jab,isd,varargin)
 %         LargeColorDifference / SmallColorDifference / UniformColorSpace.
 %
 %%% Outputs:
-% rgb = NumericArray of sRGB colorspace values, scaled so 0<=rgb<=1.
-%       Same size as input <Jab>, the last dimension encodes the R,G,B values.
+% rgb = NumericArray of sRGB colorspace values, scaled so 0<=rgb<=1. The
+%       same class & size as <Jab>, the last dimension encodes the R,G,B values.
 %
 % See also SRGB_TO_CAM02UCS CAM02UCS_PARAMETERS CIECAM02_PARAMETERS
 % CIE_WHITEPOINT CAM02UCS_TO_CIECAM02 SRGB_TO_CIEXYZ MAXDISTCOLOR

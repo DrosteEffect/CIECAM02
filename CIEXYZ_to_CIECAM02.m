@@ -25,14 +25,15 @@ function out = CIEXYZ_to_CIECAM02(XYZ,prm,isn)
 %% Input And Output Arguments %%
 %
 %%% Inputs (**==default):
-% XYZ = NumericArray, tristimulus values to convert, 1931 XYZ colorspace (Ymax==1).
-%       Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values.
+% XYZ = Double/single array of tristimulus values to convert, values 
+%       defined by the 1931 XYZ colorspace, scaled such that Ymax==1.
+%       Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values..
 % prm = Scalar structure of parameters from CIECAM02_PARAMETERS.
 % isn = false/true** -> negative A values are converted to zeros/NaNs.
 %
 %%% Outputs:
 % out = a scalar structure with numeric fields of size Nx1 or RxCx1, with
-%       CIECAM02 values calculated from <XYZ> and the input parameters:
+%       CIECAM02 values (calculated from <XYZ> and the input parameters):
 %       J = Lightness
 %       Q = Brightness
 %       C = Chroma
@@ -47,24 +48,20 @@ function out = CIEXYZ_to_CIECAM02(XYZ,prm,isn)
 %% Input Wrangling %%
 %
 isz = size(XYZ);
-assert(isnumeric(XYZ),...
-	'SC:CIEXYZ_to_CIECAM02:XYZ:NotNumeric',...
-	'1st input <XYZ> must be a numeric array.')
+assert(isfloat(XYZ),...
+	'SC:CIEXYZ_to_CIECAM02:XYZ:NotFloat',...
+	'1st input <XYZ> must be a floating point array.')
 assert(isreal(XYZ),...
-	'SC:CIEXYZ_to_CIECAM02:XYZ:ComplexValue',...
-	'1st input <XYZ> cannot be complex.')
+	'SC:CIEXYZ_to_CIECAM02:XYZ:NotReal',...
+	'1st input <XYZ> must be a real array (not complex).')
 assert(isz(end)==3,...
 	'SC:CIEXYZ_to_CIECAM02:XYZ:InvalidSize',...
 	'1st input <XYZ> last dimension must have size 3 (e.g. Nx3 or RxCx3).')
 XYZ = reshape(XYZ,[],3);
 assert(all(XYZ(:,2)>=0&XYZ(:,2)<=1),...
-	'SC:CIEXYZ_to_CIECAM02:XYZ:OutOfRange',...
+	'SC:CIEXYZ_to_CIECAM02:XYZ:OutOfRangeY',...
 	'Input <XYZ> values must be scaled so 0<=Y<=1')
 isz(end) = 1;
-%
-if ~isfloat(XYZ)
-	XYZ = double(XYZ);
-end
 %
 name = 'CIECAM02_parameters';
 assert(isstruct(prm)&&isscalar(prm),...
