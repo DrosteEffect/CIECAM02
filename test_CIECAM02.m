@@ -3,9 +3,10 @@ function test_CIECAM02()
 %
 %% Dependencies %%
 %
-% CIECAM02_parameters.m, CIECAM02_to_CIEXYZ.m,
-% CIEXYZ_to_CIECAM02.m, and test_fun.m
-% all from <https://github.com/DrosteEffect/CIECAM02>
+% * MATLAB R2009a or later.
+% * CIECAM02_parameters.m, CIECAM02_to_CIEXYZ.m,
+%   CIEXYZ_to_CIECAM02.m, and test_fun.m
+%   all from <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also TEST_FUN CIECAM02_TO_CIEXYZ CIECIEXYZ_TO_CIECAM02
 fprintf('Running @%s...\n',mfilename())

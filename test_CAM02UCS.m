@@ -3,9 +3,10 @@ function test_CAM02UCS()
 %
 %% Dependencies %%
 %
-% CAM02UCS_parameters.m, CIECAM02_to_CAM02UCS.m,
-% CAM02UCS_to_CIECAM02.m, and test_fun.m
-% all from <https://github.com/DrosteEffect/CIECAM02>
+% * MATLAB R2009a or later.
+% * CAM02UCS_parameters.m, CIECAM02_to_CAM02UCS.m,
+%   CAM02UCS_to_CIECAM02.m, and test_fun.m
+%   all from <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also TEST_FUN CIECAM02_TO_CAM02UCS CAM02UCS_TO_CIECAM02
 fprintf('Running @%s...\n',mfilename())

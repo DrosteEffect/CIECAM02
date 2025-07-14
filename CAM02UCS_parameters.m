@@ -22,7 +22,7 @@ function prm = CAM02UCS_parameters(K_L,c1,c2)
 %
 %% Dependencies %%
 %
-% None
+% * MATLAB R2009a or later.
 %
 % See also CIECAM02_PARAMETERS
 % CIECAM02_TO_CAM02UCS CAM02UCS_TO_CIECAM02 SRGB_TO_CAM02UCS CAM02UCS_TO_SRGB

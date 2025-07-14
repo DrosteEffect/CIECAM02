@@ -37,7 +37,8 @@ function Jab = CIECAM02_to_CAM02UCS(inp,prm,isd)
 %
 %% Dependencies %%
 %
-% CAM02UCS_parameters.m <https://github.com/DrosteEffect/CIECAM02>
+% * MATLAB R2009a or later.
+% * CAM02UCS_parameters.m <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also CAM02UCS_TO_CIECAM02 CAM02UCS_PARAMETERS
 % CIECAM02_TO_CIEXYZ CAM02UCS_TO_SRGB

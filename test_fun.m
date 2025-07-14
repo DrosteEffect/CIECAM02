@@ -3,7 +3,7 @@ function test_fun(out, fnh, varargin)
 %
 %% Dependencies %%
 %
-% None
+% * MATLAB R2009a or later.
 %
 % See also TEST_CAM02UCS TEST_CIECAM02
 tuo = fnh(varargin{:});

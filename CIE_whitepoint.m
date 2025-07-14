@@ -22,7 +22,7 @@ function XYZ = CIE_whitepoint(obs)
 %
 %% Dependencies %%
 %
-% None
+% * MATLAB R2009a or later.
 %
 % See also CIECAM02_PARAMETERS CAM02UCS_PARAMETERS
 % CIEXYZ_TO_CIECAM02 CIECAM02_TO_CIEXYZ SRGB_TO_CAM02UCS CAM02UCS_TO_SRGB

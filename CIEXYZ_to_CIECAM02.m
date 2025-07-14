@@ -43,7 +43,8 @@ function out = CIEXYZ_to_CIECAM02(XYZ,prm,isn)
 %
 %% Dependencies %%
 %
-% CIECAM02_parameters.m <https://github.com/DrosteEffect/CIECAM02>
+% * MATLAB R2009a or later.
+% * CIECAM02_parameters.m <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also CIECAM02_TO_CIEXYZ CIECAM02_TO_CAM02UCS CIEXYZ_TO_SRGB
 % CIECAM02_PARAMETERS

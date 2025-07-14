@@ -20,7 +20,7 @@ function prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
 %
 %% Dependencies %%
 %
-% None
+% * MATLAB R2009a or later.
 %
 % See also CAM02UCS_PARAMETERS
 % CIEXYZ_TO_CIECAM02 CIECAM02_TO_CIEXYZ SRGB_TO_CAM02UCS CAM02UCS_TO_SRGB

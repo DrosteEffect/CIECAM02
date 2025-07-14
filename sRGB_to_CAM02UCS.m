@@ -34,9 +34,10 @@ function Jab = sRGB_to_CAM02UCS(rgb,isd,varargin)
 %
 %% Dependencies %%
 %
-% CIE_whitepoint.m, CIECAM02_parameters.m, CIEXYZ_to_CIECAM02.m,
-% sRGB_to_CIEXYZ.m, CAM02UCS_parameters.m, and CIECAM02_to_CAM02UCS.m
-% all from <https://github.com/DrosteEffect/CIECAM02>
+% * MATLAB R2009a or later.
+% * CIE_whitepoint.m, CIECAM02_parameters.m, CIEXYZ_to_CIECAM02.m,
+%   sRGB_to_CIEXYZ.m, CAM02UCS_parameters.m, and CIECAM02_to_CAM02UCS.m
+%   all from <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also CAM02UCS_TO_SRGB CAM02UCS_PARAMETERS CIECAM02_PARAMETERS
 % CIE_WHITEPOINT CAM02UCS_TO_CIECAM02 SRGB_TO_CIEXYZ MAXDISTCOLOR

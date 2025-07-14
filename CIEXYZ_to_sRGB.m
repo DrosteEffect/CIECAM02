@@ -25,7 +25,7 @@ function rgb = CIEXYZ_to_sRGB(XYZ)
 %
 %% Dependencies %%
 %
-% None
+% * MATLAB R2009a or later.
 %
 % See also SRGB_TO_CIEXYZ CIEXYZ_TO_CIECAM02 SRGB_TO_CAM02UCS
 
