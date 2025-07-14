@@ -1,26 +1,28 @@
 function prm = CAM02UCS_parameters(K_L,c1,c2)
 % Parameter values to define the CAM02 colorspace (UCS/LCD/SCD/etc.).
 %
-% (c) 2017-2024 Stephen Cobeldick
+%%% Syntax %%%
 %
-%%% Syntax:
-% prm = CAM02UCS_parameters()
-% prm = CAM02UCS_parameters(space)
-% prm = CAM02UCS_parameters(K_L,c1,c2)
+%   prm = CAM02UCS_parameters()
+%   prm = CAM02UCS_parameters(space)
+%   prm = CAM02UCS_parameters(K_L,c1,c2)
 %
-%% Input and Output Arguments %%
+%% Input Arguments (**==default) %%
 %
-%%% Inputs (**==default):
-% space = StringScalar or CharRowVector, one of the following:
-%         'LCD'/'SCD'/'UCS'**, which selects a predefined CAM02 space
-%         LargeColorDifference / SmallColorDifference / UniformColorSpace.
-%%% OR:
-% K_L = NumericScalar, CAM02 coefficient (lightness parameter).
-% c1  = NumericScalar, CAM02 coefficient (space constant).
-% c2  = NumericScalar, CAM02 coefficient (space constant).
+%   space = StringScalar or CharRowVector, one of the following:
+%           'LCD'/'SCD'/'UCS'**, which selects a predefined CAM02 space
+%           LargeColorDifference / SmallColorDifference / UniformColorSpace.
+%   K_L = NumericScalar, CAM02 coefficient (lightness parameter).
+%   c1  = NumericScalar, CAM02 coefficient (space constant).
+%   c2  = NumericScalar, CAM02 coefficient (space constant).
 %
-%%% Output:
-% prm = Scalar structure of CAM02 colorspace parameter values.
+%% Output Arguments %%
+%
+%   prm = Scalar structure of CAM02 colorspace parameter values.
+%
+%% Dependencies %%
+%
+% None
 %
 % See also CIECAM02_PARAMETERS
 % CIECAM02_TO_CAM02UCS CAM02UCS_TO_CIECAM02 SRGB_TO_CAM02UCS CAM02UCS_TO_SRGB
@@ -64,7 +66,7 @@ end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%GetParam
 %
-% Copyright (c) 2017-2024 Stephen Cobeldick
+% Copyright (c) 2017-2025 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

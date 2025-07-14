@@ -1,10 +1,13 @@
 function test_CIECAM02()
 % Test CIECAM02_TO_CIEXYZ and CIECIEXYZ_TO_CIECAM02 against sample values.
 %
-% (c) 2017-2024 Stephen Cobeldick
+%% Dependencies %%
+%
+% CIECAM02_parameters.m, CIECAM02_to_CIEXYZ.m,
+% CIEXYZ_to_CIECAM02.m, and test_fun.m
+% all from <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also TEST_FUN CIECAM02_TO_CIEXYZ CIECIEXYZ_TO_CIECAM02
-
 fprintf('Running @%s...\n',mfilename())
 %
 % Source: values apparently taken from CIE 159:2004 Section 9, available at:
@@ -103,7 +106,7 @@ S = struct(C{:});
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%mkStruct
 %
-% Copyright (c) 2017-2024 Stephen Cobeldick
+% Copyright (c) 2017-2025 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

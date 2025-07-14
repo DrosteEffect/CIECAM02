@@ -1,23 +1,26 @@
 function prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
 % Parameter values defined in the CIECAM02 model "Step 0".
 %
-% (c) 2017-2024 Stephen Cobeldick
+%%% Syntax %%%
 %
-%%% Syntax:
-% prm = CIECAM02_parameters(wp,Y_b,L_A)
-% prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
+%   prm = CIECAM02_parameters(wp,Y_b,L_A)
+%   prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
 %
-%% Input and Output Arguments %%
+%% Input Arguments (**==default) %%
 %
-%%% Inputs (**==default):
-% wp  = NumericVector, whitepoint XYZ values [Xw,Yw,Zw], 1931 XYZ colorspace (Ymax==1).
-% Y_b = NumericScalar, relative luminance of reference white in the adapting field.
-% L_A = NumericScalar, adapting field luminance (cd/m^2).
-% sur = CharRowVector, one of 'dim'/'dark'/'average'**.
-%     = NumericVector, size 1x3, [F,c,N_c], CIECAM02 surround parameters.
+%   wp  = NumericVector, whitepoint XYZ values [Xw,Yw,Zw], 1931 XYZ colorspace (Ymax==1).
+%   Y_b = NumericScalar, relative luminance of reference white in the adapting field.
+%   L_A = NumericScalar, adapting field luminance (cd/m^2).
+%   sur = CharRowVector, one of 'dim'/'dark'/'average'**.
+%       = NumericVector, size 1x3, [F,c,N_c], CIECAM02 surround parameters.
 %
-%%% Output:
-% prm = Scalar structure of CIECAM02 parameter values.
+%% Output Arguments %%
+%
+%   prm = Scalar structure of CIECAM02 parameter values.
+%
+%% Dependencies %%
+%
+% None
 %
 % See also CAM02UCS_PARAMETERS
 % CIEXYZ_TO_CIECAM02 CIECAM02_TO_CIEXYZ SRGB_TO_CAM02UCS CAM02UCS_TO_SRGB
@@ -107,7 +110,7 @@ prm.name = mfilename();
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_parameters
 %
-% Copyright (c) 2017-2024 Stephen Cobeldick
+% Copyright (c) 2017-2025 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

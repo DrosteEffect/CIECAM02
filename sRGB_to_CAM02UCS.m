@@ -1,37 +1,42 @@
 function Jab = sRGB_to_CAM02UCS(rgb,isd,varargin)
 % Convert an array of sRGB values to perceptually uniform CAM02 values.
 %
-% (c) 2017-2024 Stephen Cobeldick
+%%% Syntax %%%
 %
-%%% Syntax:
-%  Jab = sRGB_to_CAM02UCS(rgb)
-%  Jab = sRGB_to_CAM02UCS(rgb,isd)
-%  Jab = sRGB_to_CAM02UCS(rgb,isd,space)
-%  Jab = sRGB_to_CAM02UCS(rgb,isd,K_L,c1,c2)
+%   Jab = sRGB_to_CAM02UCS(rgb)
+%   Jab = sRGB_to_CAM02UCS(rgb,isd)
+%   Jab = sRGB_to_CAM02UCS(rgb,isd,space)
+%   Jab = sRGB_to_CAM02UCS(rgb,isd,K_L,c1,c2)
 %
 % If the output is being used for calculating the euclidean color distance
 % (i.e. deltaE) then specify isd=true, so that J' values are divided by K_L.
 %
 %% Examples %%
 %
-% >> rgb = [64,128,255]/255;
-% >> Jab = sRGB_to_CAM02UCS(rgb)
-% Jab =
-%      56.917    -7.9440    -33.593
+%   >> rgb = [64,128,255]/255;
+%   >> Jab = sRGB_to_CAM02UCS(rgb)
+%   Jab =
+%        56.917    -7.9440    -33.593
 %
-%% Input and Output Arguments %%
+%% Input Arguments (*==default) %%
 %
-%%% Inputs (*==default):
-% rgb = Double/single rray of RGB values, scaled so that 0<=rgb<=1.
-%       Size Nx3 or RxCx3, the last dimension encodes the R,G,B values.
-% isd = ScalarLogical, true/false* = euclidean distance/reference J' values.
-% space = StringScalar or CharRowVector, one of the following:
-%         'LCD'/'SCD'/'UCS'**, which selects a predefined CAM02 space
-%         LargeColorDifference / SmallColorDifference / UniformColorSpace.
+%   rgb = Double/single rray of RGB values, scaled so that 0<=rgb<=1.
+%         Size Nx3 or RxCx3, the last dimension encodes the R,G,B values.
+%   isd = ScalarLogical, true/false* = euclidean distance/reference J' values.
+%   space = StringScalar or CharRowVector, one of the following:
+%           'LCD'/'SCD'/'UCS'**, which selects a predefined CAM02 space
+%           LargeColorDifference / SmallColorDifference / UniformColorSpace.
 %
-%%% Outputs:
-% Jab = Array of CAM02 colorspace values J'a'b'. The same
-%       class & size as <rgb>, the last dimension encodes the J',a',b' values.
+%% Output Arguments %%
+%
+%   Jab = Array of CAM02 colorspace values J'a'b'. The same
+%         class & size as <rgb>, the last dimension encodes the J',a',b' values.
+%
+%% Dependencies %%
+%
+% CIE_whitepoint.m, CIECAM02_parameters.m, CIEXYZ_to_CIECAM02.m,
+% sRGB_to_CIEXYZ.m, CAM02UCS_parameters.m, and CIECAM02_to_CAM02UCS.m
+% all from <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also CAM02UCS_TO_SRGB CAM02UCS_PARAMETERS CIECAM02_PARAMETERS
 % CIE_WHITEPOINT CAM02UCS_TO_CIECAM02 SRGB_TO_CIEXYZ MAXDISTCOLOR
@@ -53,7 +58,7 @@ Jab = reshape(Jab,isz);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sRGB_to_CAM02UCS
 %
-% Copyright (c) 2017-2024 Stephen Cobeldick
+% Copyright (c) 2017-2025 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

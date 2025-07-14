@@ -1,28 +1,31 @@
 function XYZ = sRGB_to_CIEXYZ(rgb)
 % Convert an array of sRGB values to CIE 1931 XYZ values.
 %
-% (c) 2107-2024 Stephen Cobeldick
+%%% Syntax %%%
 %
-%%% Syntax:
-% XYZ = sRGB_to_CIEXYZ(rgb)
+%   XYZ = sRGB_to_CIEXYZ(rgb)
 %
 %% Example %%
 %
-% >> rgb = [64,128,255]/255;
-% >> XYZ = sRGB_to_CIEXYZ(rgb)
-% XYZ =
-%      0.27884    0.23748    0.97722
+%   >> rgb = [64,128,255]/255;
+%   >> XYZ = sRGB_to_CIEXYZ(rgb)
+%   XYZ =
+%        0.27884    0.23748    0.97722
 %
-%% Input And Output Arguments %%
+%% Input Arguments %%
 %
-%%% Input:
-% rgb = Double/single array of sRGB values to convert, scaled so that 0<=rgb<=1.
-%       Size Nx3 or RxCx3, the last dimension encodes the R,G,B values.
+%   rgb = Double/single array of sRGB values to convert, scaled so that 0<=rgb<=1.
+%         Size Nx3 or RxCx3, the last dimension encodes the R,G,B values.
 %
-%%% Output:
-% XYZ = Double/single array of converted tristimulus values. Values
-%       defined by the 1931 XYZ colorspace, scaled such that Ymax==1.
-%       Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values.
+%% Output Arguments %%
+%
+%   XYZ = Double/single array of converted tristimulus values. Values
+%         defined by the 1931 XYZ colorspace, scaled such that Ymax==1.
+%         Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values.
+%
+%% Dependencies %%
+%
+% None
 %
 % See also CIEXYZ_TO_SRGB SRGB_TO_CAM02UCS CIEXYZ_TO_CIECAM02
 
@@ -67,7 +70,7 @@ out(idx) = real(((inp(idx) + 0.055) ./ 1.055) .^ 2.4);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sGammaInv
 %
-% Copyright (c) 2017-2024 Stephen Cobeldick
+% Copyright (c) 2017-2025 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

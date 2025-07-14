@@ -1,27 +1,31 @@
 function XYZ = CIE_whitepoint(obs)
 % CIE 2 degree observer (1931) and CIE 10 degree observer (1964) illuminants.
 %
-%%% Syntax:
-% XYZ = CIE_whitepoint(obs)
+%%% Syntax %%%
+%
+%   XYZ = CIE_whitepoint(obs)
 %
 %% Example %%
 %
-% >> CIE_whitepoint('D65')
-% ans =
-%      0.95047    1.0000    1.0888
+%   >> CIE_whitepoint('D65')
+%   ans =
+%        0.95047    1.0000    1.0888
 %
-%% Input and Output Arguments %%
+%% Input Arguments %%
 %
-%%% Input:
-% obs = StringScalar or CharRowVector, the name of the illuminant.
-%       Optional prefix specifies 2 or 10 degree, e.g. '2D50' or '10D50'.  
+%   obs = StringScalar or CharRowVector, the name of the illuminant.
+%         Optional prefix specifies 2 or 10 degree, e.g. '2D50' or '10D50'.  
 %
-%%% Output:
-% XYZ = NumericVector, whitepoint XYZ values [Xw,Yw,Zw], 1931 XYZ colorspace (Ymax==1).
+%% Output Arguments %%
+%
+%   XYZ = NumericVector, whitepoint XYZ values [Xw,Yw,Zw], 1931 XYZ colorspace (Ymax==1).
+%
+%% Dependencies %%
+%
+% None
 %
 % See also CIECAM02_PARAMETERS CAM02UCS_PARAMETERS
 % CIEXYZ_TO_CIECAM02 CIECAM02_TO_CIEXYZ SRGB_TO_CAM02UCS CAM02UCS_TO_SRGB
-
 switch upper(obs)
 	case 'ICC'
 		XYZ = [31595,32768,27030]/32768;

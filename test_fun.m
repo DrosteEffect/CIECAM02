@@ -1,10 +1,11 @@
 function test_fun(out, fnh, varargin)
 % Support function for comparing function output against expected output.
 %
-% (c) 2017-2024 Stephen Cobeldick
+%% Dependencies %%
+%
+% None
 %
 % See also TEST_CAM02UCS TEST_CIECAM02
-
 tuo = fnh(varargin{:});
 %
 if isnumeric(out)
@@ -38,7 +39,7 @@ fprintf(str);fprintf(2,fm1,sgf);fprintf('output:%s\n',sprintf(fm2,[tuo;+inm]))
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%test_fun
 %
-% Copyright (c) 2017-2024 Stephen Cobeldick
+% Copyright (c) 2017-2025 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

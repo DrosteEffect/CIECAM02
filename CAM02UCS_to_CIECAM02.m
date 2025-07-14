@@ -1,39 +1,42 @@
 function out = CAM02UCS_to_CIECAM02(Jab,prm,isd)
 % Convert an array of CAM02 colorspace values to a structure of CIECAM02 values.
 %
-% (c) 2017-2024 Stephen Cobeldick
+%%% Syntax %%%
 %
-%%% Syntax:
-%  out = CAM02UCS_to_CIECAM02(Jab,prm)
-%  out = CAM02UCS_to_CIECAM02(Jab,prm,isd)
+%   out = CAM02UCS_to_CIECAM02(Jab,prm)
+%   out = CAM02UCS_to_CIECAM02(Jab,prm,isd)
 %
 % If the input was being used for calculating the euclidean color distance
 % (i.e. deltaE) use isd=true, so that J' values are multiplied by K_L.
 %
 %% Example %%
 %
-% >> Jab = [56.9174814457648495,-7.94398845807383758,-33.5932377101949626];
-% >> prm = CAM02UCS_parameters();
-% >> out = CAM02UCS_to_CIECAM02(Jab,prm)
-% out =
-%     J:  43.730
-%     M:  52.496
-%     h: 256.70
+%   >> Jab = [56.9174814457648495,-7.94398845807383758,-33.5932377101949626];
+%   >> prm = CAM02UCS_parameters();
+%   >> out = CAM02UCS_to_CIECAM02(Jab,prm)
+%   out =
+%       J:  43.730
+%       M:  52.496
+%       h: 256.70
 %
-%% Input and Output Arguments %%
+%% Input Arguments (**==default) %%
 %
-%%% Inputs (**==default):
-% Jab = Double/single array, CAM02 perceptually uniform colorspace values J',a',b'.
-%       Size Nx3 or RxCx3, the last dimension encodes the J'a'b' values.
-% prm = ScalarStructure of parameters from the function CAM02UCS_PARAMETERS.
-% isd = ScalarLogical, true/false** = euclidean distance/reference J' values.
+%   Jab = Double/single array, CAM02 perceptually uniform colorspace values J',a',b'.
+%         Size Nx3 or RxCx3, the last dimension encodes the J'a'b' values.
+%   prm = ScalarStructure of parameters from the function CAM02UCS_PARAMETERS.
+%   isd = ScalarLogical, true/false** = euclidean distance/reference J' values.
 %
-%%% Outputs:
-% out = ScalarStructure of CIECAM02 J, M, and h values. Each field has the
-%       class of <Jab>, and either size Nx1 or RxCx1. The fields encode:
-%       J = Lightness
-%       M = Colorfulness
-%       h = Hue Angle
+%% Output Arguments %%
+%
+%   out = ScalarStructure of CIECAM02 J, M, and h values. Each field has the
+%         class of <Jab>, and either size Nx1 or RxCx1. The fields encode:
+%         J = Lightness
+%         M = Colorfulness
+%         h = Hue Angle
+%
+%% Dependencies %%
+%
+% CAM02UCS_parameters.m <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also CIECAM02_TO_CAM02UCS CAM02UCS_PARAMETERS
 % CAM02UCS_TO_SRGB SRGB_TO_CAM02UCS CIECAM02_TO_CIEXYZ
@@ -90,7 +93,7 @@ ang(Y==0 & X==0) = 0;
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%myAtan2d
 %
-% Copyright (c) 2017-2024 Stephen Cobeldick
+% Copyright (c) 2017-2025 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

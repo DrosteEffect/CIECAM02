@@ -1,46 +1,49 @@
 function out = CIEXYZ_to_CIECAM02(XYZ,prm,isn)
 % Convert an array of CIE 1931 XYZ values to a structure of CIECAM02 values.
 %
-% (c) 2017-2024 Stephen Cobeldick
+%%% Syntax %%%
 %
-%%% Syntax:
-% out = CIEXYZ_to_CIECAM02(XYZ,prm)
-% out = CIEXYZ_to_CIECAM02(XYZ,prm,isn)
+%   out = CIEXYZ_to_CIECAM02(XYZ,prm)
+%   out = CIEXYZ_to_CIECAM02(XYZ,prm,isn)
 %
 %% Example %%
 %
-% >> XYZ = [0.278835239474185759,0.237483316531782285,0.977220072160195796];
-% >> wp  = CIE_whitepoint('D65');
-% >> prm = CIECAM02_parameters(wp,20,64/pi/5,'average');
-% >> out = CIEXYZ_to_CIECAM02(XYZ,prm)
-% out =
-%     J:  43.730
-%     Q:  81.799
-%     C:  72.616
-%     M:  52.496
-%     s:  80.110
-%     H: 309.38
-%     h: 256.70
+%   >> XYZ = [0.278835239474185759,0.237483316531782285,0.977220072160195796];
+%   >> wp  = CIE_whitepoint('D65');
+%   >> prm = CIECAM02_parameters(wp,20,64/pi/5,'average');
+%   >> out = CIEXYZ_to_CIECAM02(XYZ,prm)
+%   out =
+%       J:  43.730
+%       Q:  81.799
+%       C:  72.616
+%       M:  52.496
+%       s:  80.110
+%       H: 309.38
+%       h: 256.70
 %
-%% Input And Output Arguments %%
+%% Input Arguments (**==default) %%
 %
-%%% Inputs (**==default):
-% XYZ = Double/single array of tristimulus values to convert, values 
-%       defined by the 1931 XYZ colorspace, scaled such that Ymax==1.
-%       Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values..
-% prm = Scalar structure of parameters from CIECAM02_PARAMETERS.
-% isn = false/true** -> negative A values are converted to zeros/NaNs.
+%   XYZ = Double/single array of tristimulus values to convert, values 
+%         defined by the 1931 XYZ colorspace, scaled such that Ymax==1.
+%         Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values.
+%   prm = Scalar structure of parameters from CIECAM02_PARAMETERS.
+%   isn = false/true** -> negative A values are converted to zeros/NaNs.
 %
-%%% Outputs:
-% out = a scalar structure with numeric fields of size Nx1 or RxCx1, with
-%       CIECAM02 values (calculated from <XYZ> and the input parameters):
-%       J = Lightness
-%       Q = Brightness
-%       C = Chroma
-%       M = Colorfulness
-%       s = Saturation
-%       H = Hue Composition
-%       h = Hue Angle
+%% Output Arguments %%
+%
+%   out = a scalar structure with numeric fields of size Nx1 or RxCx1, with
+%         CIECAM02 values (calculated from <XYZ> and the input parameters):
+%         J = Lightness
+%         Q = Brightness
+%         C = Chroma
+%         M = Colorfulness
+%         s = Saturation
+%         H = Hue Composition
+%         h = Hue Angle
+%
+%% Dependencies %%
+%
+% CIECAM02_parameters.m <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also CIECAM02_TO_CIEXYZ CIECAM02_TO_CAM02UCS CIEXYZ_TO_SRGB
 % CIECAM02_PARAMETERS
@@ -73,32 +76,32 @@ assert(strcmp(prm.name,name),...
 %
 %% Conversion %%
 %
-%%% Step 1: cone responses:
+%%% Step 1: cone responses %%%
 %
 LMS = (100*XYZ) * prm.M_CAT02.';
 %
-%%% Step 2: cone responses considering luminance and surround:
+%%% Step 2: cone responses considering luminance and surround %%%
 %
 LMS_C = bsxfun(@times, prm.LMS_c, LMS);
 %
-%%% Step 3: Hunt-Pointer-Estevez response:
+%%% Step 3: Hunt-Pointer-Estevez response %%%
 %
 LMSp = LMS_C * (prm.M_HPE / prm.M_CAT02).';
 %
-%%% Step 4: post-adaption cone response:
+%%% Step 4: post-adaption cone response %%%
 %
 LMSp_signs = sign(LMSp);
 tmp = (prm.F_L .* bsxfun(@times,LMSp_signs,LMSp)/100).^0.42;
 LMSp_a = 400*LMSp_signs .* (tmp ./ (tmp+27.13)) + 0.1;
 %
-%%% Step 5: red-green (a), yellow-blue (b) and hue angle:
+%%% Step 5: red-green (a), yellow-blue (b) and hue angle %%%
 %
 a = LMSp_a * ([11;-12;1]/11);
 b = LMSp_a * ([1;1;-2]/9);
 h_rad = atan2(b,a);
 h = mod(180*h_rad/pi, 360);
 %
-%%% Step 6: eccentricity and hue composition:
+%%% Step 6: eccentricity and hue composition %%%
 %
 hp = h + 360*(h < prm.h_i(1));
 tmp = bsxfun(@le,prm.h_i,hp.');
@@ -107,20 +110,20 @@ tmp = flipud(cumsum(flipud(tmp),1))==1;
 tmp = (hp - prm.h_i(idx)) ./ prm.e_i(idx);
 H = prm.H_i(idx) + (100*tmp) ./ (tmp + (prm.h_i(idx+1)-hp) ./ prm.e_i(idx+1));
 %
-%%% Step 7: achromatic response:
+%%% Step 7: achromatic response %%%
 %
 A = (LMSp_a*[2;1;1/20] - 0.305) .* prm.N_bb;
 A(A<0) = 0 / ~(nargin<3 || isn);
 %
-%%% Step 8: correlate of lightness:
+%%% Step 8: correlate of lightness %%%
 %
 J = 100*(A ./ prm.A_w).^(prm.c.*prm.z); % lightness
 %
-%%% Step 9: correlate of brightness:
+%%% Step 9: correlate of brightness %%%
 %
 Q = (4./prm.c) .* sqrt(J/100) .* (prm.A_w+4) .* sqrt(sqrt(prm.F_L)); % brightness
 %
-%%% Step 10: correlates of chroma, colorfulness, and saturation:
+%%% Step 10: correlates of chroma, colorfulness, and saturation %%%
 %
 e = (12500/13) .* prm.N_c .* prm.N_cb .* (cos(h_rad+2) + 3.8); % eccentricity
 tmp = (e .* sqrt(a.^2 + b.^2) ./ (LMSp_a*[1;1;21/20]));
@@ -134,7 +137,7 @@ out = structfun(@(v)reshape(v,isz), out, 'UniformOutput',false);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIEXYZ_to_CIECAM02
 %
-% Copyright (c) 2017-2024 Stephen Cobeldick
+% Copyright (c) 2017-2025 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.

@@ -1,37 +1,42 @@
 function rgb = CAM02UCS_to_sRGB(Jab,isd,varargin)
 % Convert an array of perceptually uniform CAM02 colorspace values to sRGB values.
 %
-% (c) 2017-2024 Stephen Cobeldick
+%%% Syntax %%%
 %
-%%% Syntax:
-%  rgb = CAM02UCS_to_sRGB(Jab)
-%  rgb = CAM02UCS_to_sRGB(Jab,isd)
-%  rgb = CAM02UCS_to_sRGB(Jab,isd,space)
-%  rgb = CAM02UCS_to_sRGB(Jab,isd,K_L,c1,c2)
+%   rgb = CAM02UCS_to_sRGB(Jab)
+%   rgb = CAM02UCS_to_sRGB(Jab,isd)
+%   rgb = CAM02UCS_to_sRGB(Jab,isd,space)
+%   rgb = CAM02UCS_to_sRGB(Jab,isd,K_L,c1,c2)
 %
 % If the input was being used for calculating the euclidean color distance
 % (i.e. deltaE) use isd=true, so that J' values are multiplied by K_L.
 %
-%% Examples %%
+%% Example %%
 %
-% >> Jab = [56.9174814457648495,-7.94398845807383758,-33.5932377101949626];
-% >> rgb = CAM02UCS_to_sRGB(Jab)*255
-% rgb =
-%      64.000    128.00    255.00
+%   >> Jab = [56.9174814457648495,-7.94398845807383758,-33.5932377101949626];
+%   >> rgb = CAM02UCS_to_sRGB(Jab)*255
+%   rgb =
+%        64.000    128.00    255.00
 %
-%% Input and Output Arguments %%
+%% Input Arguments (**==default) %%
 %
-%%% Inputs (**==default):
-% Jab   = Double/single array, CAM02 perceptually uniform colorspace values J'a'b'.
-%         Size Nx3 or RxCx3, the last dimension encodes the J',a',b' values.
-% isd   = ScalarLogical, true/false** = euclidean distance/reference J' values.
-% space = StringScalar or CharRowVector, one of the following:
-%         'LCD'/'SCD'/'UCS'**, which selects a predefined CAM02 space
-%         LargeColorDifference / SmallColorDifference / UniformColorSpace.
+%   Jab   = Double/single array, CAM02 perceptually uniform colorspace values J'a'b'.
+%           Size Nx3 or RxCx3, the last dimension encodes the J',a',b' values.
+%   isd   = ScalarLogical, true/false** = euclidean distance/reference J' values.
+%   space = StringScalar or CharRowVector, one of the following:
+%           'LCD'/'SCD'/'UCS'**, which selects a predefined CAM02 space
+%           LargeColorDifference / SmallColorDifference / UniformColorSpace.
 %
-%%% Outputs:
-% rgb = NumericArray of sRGB colorspace values, scaled so 0<=rgb<=1. The
-%       same class & size as <Jab>, the last dimension encodes the R,G,B values.
+%% Output Arguments %%
+%
+%   rgb = NumericArray of sRGB colorspace values, scaled so 0<=rgb<=1. Has the
+%         same class & size as <Jab>, the last dimension encodes the R,G,B values.
+%
+%% Dependencies %%
+%
+% CAM02UCS_parameters.m, CAM02UCS_to_CIECAM02.m, CIE_whitepoint.m,
+% CIECAM02_parameters.m, CIECAM02_to_CIEXYZ.m, and CIEXYZ_to_sRGB.m 
+% all from <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also SRGB_TO_CAM02UCS CAM02UCS_PARAMETERS CIECAM02_PARAMETERS
 % CIE_WHITEPOINT CAM02UCS_TO_CIECAM02 SRGB_TO_CIEXYZ MAXDISTCOLOR
@@ -54,7 +59,7 @@ rgb = reshape(rgb,isz);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CAM02UCS_to_sRGB
 %
-% Copyright (c) 2017-2024 Stephen Cobeldick
+% Copyright (c) 2017-2025 Stephen Cobeldick
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.
