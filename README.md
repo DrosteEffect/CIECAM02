@@ -1,6 +1,8 @@
 CIECAM02 Color Appearance Model and CAM02 Uniform ColorSpace for MATLAB
 =======================================================================
 
+[![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=DrosteEffect/CIECAM02)
+
 This code is based on two sources:
 
 1. the chapter "CIECAM02 and Its Recent Developments" by color
@@ -14,34 +16,34 @@ This code is based on two sources:
 This MATLAB implementation was inspired by the python module
 "colorspacious" written by Nathaniel J. Smith, available here:
 
-https://github.com/njsmith/colorspacious
+<https://github.com/njsmith/colorspacious>
 
 Smith's very comprehensive python module "colorspacious" was used to
 generate the new perceptually uniform colormaps which are now default
 for MatPlotLib 2.0. These colormaps are also available for MATLAB here:
 
-https://www.mathworks.com/matlabcentral/fileexchange/62729-matplotlib-2-0-colormaps--perceptually-uniform-and-beautiful
+<https://www.mathworks.com/matlabcentral/fileexchange/62729-matplotlib-2-0-colormaps--perceptually-uniform-and-beautiful>
 
 My goal was to provide functionality as simple as the commonly used CIELab
 colorspace conversions, whilst providing a much more perceptually uniform
 colorspace. Note that I replaced calculations with a matrix inverse, e.g.
-inv(A)*b, with the recommended and numerically more precise A\b:
+`inv(A)*b`, with the recommended and numerically more precise `A\b`:
 
-https://www.mathworks.com/help/matlab/ref/inv.html
+<https://www.mathworks.com/help/matlab/ref/inv.html>
 
 Quickstart Guide: As Easy As CIELAB!
 ------------------------------------
 
 Many users will want to convert between sRGB and the CAM02 uniform colorspace,
-just as easily as they might use |rgb2lab| and |lab2rgb|. This conversion
-is easy with these convenience functions (aka |rgb2jab| and |jab2lab|):
+just as easily as they might use `rgb2lab` and `lab2rgb`. This conversion
+is easy with these convenience functions (i.e. `rgb2jab` and `jab2rgb`):
 
     Jab = sRGB_to_CAM02UCS(rgb)
     rgb = CAM02UCS_to_sRGB(Jab)
 
 These use default values that are appropriate for sRGB (D65 illuminant, etc),
 and the CAM02-UCS colorspace (option to select SCD, LCD, or UCS colorspaces).
-Note that the sRGB inputs are MATLAB standard float values 0<=rgb<=1.
+Note that the sRGB inputs are MATLAB standard float values `0<=rgb<=1`.
 
 Other Conversions
 -----------------
@@ -55,7 +57,7 @@ colorspaces, the main functions provide the following conversions:
     CIECAM02_to_CAM02UCS()
     CAM02UCS_to_CIECAM02()
 
-And for convenience in MATLAB (note that XYZ is scaled so Ymax==1):
+And for convenience in MATLAB (note that `XYZ` is scaled so `Ymax==1`):
 
     sRGB_to_CIEXYZ()
     CIEXYZ_to_sRGB()
