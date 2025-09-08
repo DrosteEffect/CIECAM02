@@ -1,4 +1,4 @@
-function Jab = CIECAM02_to_CAM02UCS(inp,prm,isd)
+function [Jab,suffix] = CIECAM02_to_CAM02UCS(inp,prm,isd)
 % Convert a structure of CIECAM02 values to an array of CAM02 colorspace values.
 %
 %%% Syntax %%%
@@ -76,13 +76,13 @@ J = inp.J(:);
 M = inp.M(:);
 h = inp.h(:);
 %
-name = 'CAM02UCS_parameters';
+mfname = 'CAM02UCS_parameters';
 assert(isstruct(prm)&&isscalar(prm),...
 	'SC:CIECAM02_to_CAM02UCS:prm:NotScalarStruct',...
 	'2nd input <prm> must be a scalar structure.')
-assert(strcmp(prm.name,name),...
+assert(strcmp(prm.mfname,mfname),...
 	'SC:CIECAM02_to_CAM02UCS:prm:UnknownStructOrigin',...
-	'2nd input <prm> must be the structure returned by "%s.m".',name)
+	'2nd input <prm> must be the structure returned by "%s.m".',mfname)
 %
 %% JMh2Jab %%
 %
@@ -98,6 +98,8 @@ ap = Mp .* cosd(h);
 bp = Mp .* sind(h);
 %
 Jab = reshape([Jp,ap,bp],isz);
+%
+suffix = prm.suffix;
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_to_CAM02UCS

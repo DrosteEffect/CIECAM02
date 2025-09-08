@@ -1,4 +1,4 @@
-function Jab = sRGB_to_CAM02UCS(rgb,isd,varargin)
+function [Jab,csname,zyxlbl] = sRGB_to_CAM02UCS(rgb,isd,varargin)
 % Convert an array of sRGB values to perceptually uniform CAM02 values.
 %
 %%% Syntax %%%
@@ -55,6 +55,9 @@ one = CAM02UCS_parameters(varargin{:});
 Jab = CIECAM02_to_CAM02UCS(c02,one,nargin>1&&isd);
 %
 Jab = reshape(Jab,isz);
+%
+csname = strcat('CAM02',one.suffix);
+zyxlbl = strcat({'J_{','a_{','b_{'},one.suffix,'}');
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sRGB_to_CAM02UCS

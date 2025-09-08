@@ -42,26 +42,27 @@ switch nargin
 			'SC:CAM02UCS_parameters:NotNumericScalars',...
 			'All numeric inputs must be real numeric scalars.')
 		prm = structfun(@double,prm, 'UniformOutput',false);
+		prm.suffix = 'custom';
 	otherwise
 		error('SC:CAM02UCS_parameters:InvalidInputs',...
 			'Either one text input, or three numeric inputs are required.')
 end
 %
-prm.name = mfilename();
+prm.mfname = mfilename();
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CAM02UCS_parameters
 function prm = GetParam(K_L)
 switch upper(K_L)
 	case 'UCS'
-		prm.K_L = 1.00;   prm.c1 = 0.007;   prm.c2 = 0.0228;
+		prm.K_L=1.00; prm.c1=0.007; prm.c2=0.0228; prm.suffix='UCS';
 	case 'LCD'
-		prm.K_L = 0.77;   prm.c1 = 0.007;   prm.c2 = 0.0053;
+		prm.K_L=0.77; prm.c1=0.007; prm.c2=0.0053; prm.suffix='LCD';
 	case 'SCD'
-		prm.K_L = 1.24;   prm.c1 = 0.007;   prm.c2 = 0.0363;
+		prm.K_L=1.24; prm.c1=0.007; prm.c2=0.0363; prm.suffix='SCD';
 	otherwise
 		error('SC:CAM02UCS_parameters:UnknownColorspace',...
-			'The requested colorspace "%s" is not supported.',spc)
+			'The requested colorspace "%s" is not supported.',K_L)
 end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%GetParam

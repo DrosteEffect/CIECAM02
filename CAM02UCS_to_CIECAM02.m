@@ -62,13 +62,13 @@ Jp = Jab(:,1);
 ap = Jab(:,2);
 bp = Jab(:,3);
 %
-name = 'CAM02UCS_parameters';
+mfname = 'CAM02UCS_parameters';
 assert(isstruct(prm)&&isscalar(prm),...
 	'SC:CAM02UCS_to_CIECAM02:prm:NotScalarStruct',...
 	'2nd input <prm> must be a scalar structure.')
-assert(strcmp(prm.name,name),...
+assert(strcmp(prm.mfname,mfname),...
 	'SC:CAM02UCS_to_CIECAM02:prm:UnknownStructOrigin',...
-	'2nd input <prm> must be the structure returned by "%s.m".',name)
+	'2nd input <prm> must be the structure returned by "%s.m".',mfname)
 %
 %% Jab2JMh %%
 %

@@ -105,7 +105,7 @@ tmp = ((prm.F_L .* prm.LMSp_w)/100).^0.42;
 prm.LMSp_aw = 400*(tmp ./ (27.13 + tmp)) + 0.1;
 prm.A_w = (prm.LMSp_aw * [2;1;1/20] - 0.305) * prm.N_bb;
 %
-prm.name = mfilename();
+prm.mfname = mfilename();
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_parameters
