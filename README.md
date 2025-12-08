@@ -13,6 +13,8 @@ This code is based on two sources:
    Guihua Cui, and Changjun Li, from volume 31 issue 4 of the journal
    "Color Research and Application", published on the 5th July 2006.
 
+This MATLAB implementation does _**not**_ require the Image Processing Toolbox!
+
 This MATLAB implementation was inspired by the python module
 "colorspacious" written by Nathaniel J. Smith, available here:
 
@@ -20,7 +22,7 @@ This MATLAB implementation was inspired by the python module
 
 Smith's very comprehensive python module "colorspacious" was used to
 generate the new perceptually uniform colormaps which are now default
-for MatPlotLib 2.0. These colormaps are also available for MATLAB here:
+for MatPlotLib 2 & MatPlotLib 3. These colormaps are also available for MATLAB here:
 
 <https://www.mathworks.com/matlabcentral/fileexchange/62729-matplotlib-2-0-colormaps--perceptually-uniform-and-beautiful>
 
@@ -67,5 +69,6 @@ Test Scripts
 
 Of course there is no point in writing a conversion this complex without
 testing it thoroughly: test functions check the conversion between CIEXYZ
-and CIECAM02 and CAM02 J'a'b'. The test values are those referenced in
-"colorspacious", and the test functions are included in this repository.
+and CIECAM02 and CAM02 J'a'b'. The test values are those referenced in the
+Python libraries "colorspacious" and "colour-science".
+The test functions are included in this repository.

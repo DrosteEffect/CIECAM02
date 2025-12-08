@@ -29,6 +29,8 @@ function prm = CAM02UCS_parameters(K_L,c1,c2)
 
 %% Input Wrangling %%
 %
+fnh = @(x)isnumeric(x)&&isscalar(x)&&isreal(x);
+%
 switch nargin
 	case 0
 		prm = GetParam('UCS'); % default
@@ -36,9 +38,9 @@ switch nargin
 		prm = GetParam(K_L);
 	case 3
 		prm.K_L = K_L;
-		prm.c1 =  c1;
-		prm.c2 =  c2;
-		assert(all(structfun(@(x)isnumeric(x)&&isscalar(x)&&isreal(x),prm)),...
+		prm.c1  = c1;
+		prm.c2  = c2;
+		assert(all(structfun(fnh,prm)),...
 			'SC:CAM02UCS_parameters:NotNumericScalars',...
 			'All numeric inputs must be real numeric scalars.')
 		prm = structfun(@double,prm, 'UniformOutput',false);

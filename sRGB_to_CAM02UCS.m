@@ -23,7 +23,7 @@ function [Jab,csname,zyxlbl] = sRGB_to_CAM02UCS(rgb,isd,varargin)
 %   Jab =
 %        56.917    -7.9440    -33.593
 %
-%% Input Arguments (*==default) %%
+%% Input Arguments (**==default) %%
 %
 %   rgb = Numeric array of sRGB values to convert. Floating point values
 %         must be 0<=rgb<=1, integer must be 0<=rgb<=intmax(class(rgb)).

@@ -9,7 +9,7 @@ function prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
 %% Input Arguments (**==default) %%
 %
 %   wp  = NumericVector, whitepoint XYZ values [Xw,Yw,Zw], 1931 XYZ colorspace (Ymax==1).
-%   Y_b = NumericScalar, relative luminance of reference white in the adapting field.
+%   Y_b = NumericScalar, relative luminance factor of the background.
 %   L_A = NumericScalar, adapting field luminance (cd/m^2).
 %   sur = CharRowVector, one of 'dim'/'dark'/'average'**.
 %       = NumericVector, size 1x3, [F,c,N_c], CIECAM02 surround parameters.
@@ -76,6 +76,7 @@ prm.M_CAT02 = [...
 	+0.7328,+0.4296,-0.1624;...
 	-0.7036,+1.6975,+0.0061;...
 	+0.0030,+0.0136,+0.9834];
+%
 prm.M_HPE = [...
 	+0.38971,+0.68898,-0.07868;...
 	-0.22981,+1.18340,+0.04641;...
@@ -93,9 +94,10 @@ prm.D = max(0,min(1,prm.D));
 %
 prm.LMS_c = prm.D*prm.XYZ_w(2) ./ prm.LMS_w + 1 - prm.D;
 prm.LMSp_w = (prm.LMS_c .* prm.LMS_w) * (prm.M_HPE / prm.M_CAT02).';
-% Michaelis-Mentis equation:
+% Michaelis-Menten equation for the luminance level adaption factor:
 prm.k = 1 ./ (5*L_A+1);
 prm.F_L = (prm.k.^4 .* (5*L_A))/5 + ((1-prm.k^4).^2 .* (5*L_A).^(1/3))/10;
+%
 prm.n = Y_b ./ prm.XYZ_w(2);
 prm.z = 1.48 + sqrt(prm.n);
 prm.N_bb = 0.725 * prm.n.^(-1/5);

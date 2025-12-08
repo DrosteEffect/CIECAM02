@@ -31,7 +31,7 @@ else
 	fm0 = '@%3$s  line:%2$d';
 end
 str = sprintf(fm0,dbs(1).file,dbs(1).line,func2str(fnh));
-fm1 = '  \x394sgf:%d  ';
+fm1 = '  \x394sgf:%2d  ';
 fm2 = ' %+#.15g(%c)';
 fprintf(str);fprintf(2,fm1,sgf);fprintf('expect:%s\n',sprintf(fm2,[out;+inm]))
 fprintf(str);fprintf(2,fm1,sgf);fprintf('output:%s\n',sprintf(fm2,[tuo;+inm]))

@@ -7,7 +7,7 @@ function out = CAM02UCS_to_CIECAM02(Jab,prm,isd)
 %   out = CAM02UCS_to_CIECAM02(Jab,prm,isd)
 %
 % If the input was being used for calculating the euclidean color distance
-% (i.e. deltaE) use isd=true, so that J' values are multiplied by K_L.
+% (i.e. deltaE) then set isd=true, so that J' values are multiplied by K_L.
 %
 %% Example %%
 %
@@ -81,6 +81,7 @@ J  = -Jp ./ (prm.c1 * Jp - 100*prm.c1 -1);
 %
 h  = myAtan2d(bp,ap);
 Mp = hypot(ap,bp);
+%
 M  = (exp(prm.c2*Mp) - 1) / prm.c2;
 %
 out = struct('J',J,'M',M,'h',h);

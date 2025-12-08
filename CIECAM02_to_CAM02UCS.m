@@ -6,8 +6,8 @@ function [Jab,suffix] = CIECAM02_to_CAM02UCS(inp,prm,isd)
 %   Jab = CIECAM02_to_CAM02UCS(inp,prm)
 %   Jab = CIECAM02_to_CAM02UCS(inp,prm,isd)
 %
-% If the output is being used for calculating the euclidean color distance
-% (i.e. deltaE) then specify isd=true, so that J' values are divided by K_L.
+% If the output is to be used for calculating the euclidean color distance
+% (i.e. deltaE) then set isd=true, so that J' values are divided by K_L.
 %
 %% Example %%
 %
@@ -66,11 +66,14 @@ assert(isequal(tmp{:}),...
 isz = tmp{1};
 isz(max(2,find([isz==1,true],1,'first'))) = 3;
 %
-assert(isfield(inp,'J'),'SC:CIECAM02_to_CAM02UCS:inp:MissingField_J',...
+assert(isfield(inp,'J'),...
+	'SC:CIECAM02_to_CAM02UCS:inp:MissingField_J',...
 	'Input <inp> must contain the field "J".')
-assert(isfield(inp,'M'),'SC:CIECAM02_to_CAM02UCS:inp:MissingField_M',...
+assert(isfield(inp,'M'),...
+	'SC:CIECAM02_to_CAM02UCS:inp:MissingField_M',...
 	'Input <inp> must contain the field "M".')
-assert(isfield(inp,'h'),'SC:CIECAM02_to_CAM02UCS:inp:MissingField_h',...
+assert(isfield(inp,'h'),...
+	'SC:CIECAM02_to_CAM02UCS:inp:MissingField_h',...
 	'Input <inp> must contain the field "h".')
 %
 J = inp.J(:);
@@ -94,7 +97,6 @@ if nargin>2&&isd
 end
 %
 Mp = (1 / prm.c2) * log(1 + prm.c2 * M);
-%
 ap = Mp .* cosd(h);
 bp = Mp .* sind(h);
 %

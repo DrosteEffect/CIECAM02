@@ -27,7 +27,8 @@ function out = CIEXYZ_to_CIECAM02(XYZ,prm,isn)
 %         defined by the CIE 1931 XYZ colorspace, scaled such that Ymax==1.
 %         Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values.
 %   prm = Scalar structure of parameters from CIECAM02_PARAMETERS.
-%   isn = false/true** -> negative A values are converted to zeros/NaNs.
+%   isn = false  -> negative A values are converted to zero.
+%       = true** -> negative A values are converted to NaN.
 %
 %% Output Arguments %%
 %
@@ -77,11 +78,11 @@ assert(strcmp(prm.mfname,mfname),...
 %
 %% Conversion %%
 %
-%%% Step 1: cone responses %%%
+%%% Step 1: cone responses (CAT02) %%%
 %
 LMS = (100*XYZ) * prm.M_CAT02.';
 %
-%%% Step 2: cone responses considering luminance and surround %%%
+%%% Step 2: chromatic adaptation (cone responses considering luminance and surround) %%%
 %
 LMS_C = bsxfun(@times, prm.LMS_c, LMS);
 %
@@ -89,20 +90,20 @@ LMS_C = bsxfun(@times, prm.LMS_c, LMS);
 %
 LMSp = LMS_C * (prm.M_HPE / prm.M_CAT02).';
 %
-%%% Step 4: post-adaption cone response %%%
+%%% Step 4: post-adaption cone response (nonlinear compression) %%%
 %
 LMSp_signs = sign(LMSp);
 tmp = (prm.F_L .* bsxfun(@times,LMSp_signs,LMSp)/100).^0.42;
 LMSp_a = 400*LMSp_signs .* (tmp ./ (tmp+27.13)) + 0.1;
 %
-%%% Step 5: red-green (a), yellow-blue (b) and hue angle %%%
+%%% Step 5: hue angle & opponent color dimensions a (red-green) & b (yellow-blue) %%%
 %
 a = LMSp_a * ([11;-12;1]/11);
 b = LMSp_a * ([1;1;-2]/9);
 h_rad = atan2(b,a);
 h = mod(180*h_rad/pi, 360);
 %
-%%% Step 6: eccentricity and hue composition %%%
+%%% Step 6: hue composition (using unique hue data) %%%
 %
 hp = h + 360*(h < prm.h_i(1));
 tmp = bsxfun(@le,prm.h_i,hp.');
@@ -126,7 +127,7 @@ Q = (4./prm.c) .* sqrt(J/100) .* (prm.A_w+4) .* sqrt(sqrt(prm.F_L)); % brightnes
 %
 %%% Step 10: correlates of chroma, colorfulness, and saturation %%%
 %
-e = (12500/13) .* prm.N_c .* prm.N_cb .* (cos(h_rad+2) + 3.8); % eccentricity
+e = (12500/13) .* prm.N_c .* prm.N_cb .* (cos(h_rad+2) + 3.8); % eccentricity factor
 tmp = (e .* sqrt(a.^2 + b.^2) ./ (LMSp_a*[1;1;21/20]));
 C = tmp.^0.9 .* sqrt(J/100) .* (1.64 - 0.29.^prm.n).^0.73; % chroma
 M = C .* sqrt(sqrt(prm.F_L)); % colorfulness

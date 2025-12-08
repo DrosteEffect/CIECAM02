@@ -80,7 +80,7 @@ assert(strcmp(prm.mfname,mfname),...
 %
 %% Conversion %%
 %
-%%% Step 1 %%%
+%%% Step 1: determine J & C & h %%%
 %
 % Goal: lightness (J)
 if isfield(inp,'J')
@@ -127,55 +127,55 @@ else
 		'Input <inp> must contain the field "h" or "H".')
 end
 %
-%%% Step 2 %%%
+%%% Step 2: determine t & e_t & A %%%
 %
 t  = (C ./ (sqrt(J./100) .* (1.64 - 0.29.^prm.n).^0.73)) .^ (1/0.9);
-et = (cos(pi*h/180+2)+3.8) / 4;
-A  = prm.A_w .* (J./100) .^ (1./(prm.c*prm.z));
+et = (cos(pi*h/180+2)+3.8) / 4; % eccentricity factor
+A  = prm.A_w .* (J./100) .^ (1./(prm.c*prm.z)); % achromatic response
 p1 = (50000/13 * prm.N_c * prm.N_cb) * et ./ t;
 p2 = A ./ prm.N_bb + 0.305;
 p3 = 21/20;
+p4 = p1./sind(h);
+p5 = p1./cosd(h);
 %
-%%% Step 3: red-green (a), yellow-blue (b) %%%
+%%% Step 3: opponent color dimensions a (red-green) & b (yellow-blue) %%%
 %
 a = nan(size(h),class(h));
 b = nan(size(h),class(h));
 %
 idx = abs(sind(h)) >= abs(cosd(h));
 %
-nom = 460 * (p2 .* (2+p3)) / 1403;
-den = 220 * (2+p3) / 1403;
+nom = 460./1403 .* (p2 .* (2+p3));
+den = 220./1403 .* (2+p3);
 %
-tmp = cosd(h(idx))./sind(h(idx));
-b(idx) = nom(idx) ./ ((p1(idx) ./ sind(h(idx))) + den .* tmp - ...
-	(27/1403) + p3.*(6300/1403)); %bryce:change: p3 is a scalar so should not be p3(idx)
+tmp = cosd(h(idx)) ./ sind(h(idx));
+b(idx) = nom(idx) ./ (p4 + den.*tmp - (27/1403) + p3.*(6300/1403));
 a(idx) = b(idx) .* tmp;
 %
 idx = ~idx;
 %
-tmp = sind(h(idx))./cosd(h(idx));
-a(idx) = nom(idx) ./ ((p1(idx) ./ cosd(h(idx))) + den - ...
-	((27/1403) - p3.*(6300/1403)) .* tmp); %bryce:change: p3 is a scalar so should not be p3(idx)
+tmp = sind(h(idx)) ./ cosd(h(idx));
+a(idx) = nom(idx) ./ (p5 + den - ((27/1403) - p3.*(6300/1403)).*tmp);
 b(idx) = a(idx) .* tmp;
 %
 idx = t==0;
 a(idx) = 0;
 b(idx) = 0;
 %
-%%% Step 4: post-adaption cone response %%%
+%%% Step 4: post-adaption cone response (nonlinear compressed) %%%
 %
 LMSp_a = (460*p2+[+451*a+288*b,-891*a-261*b,-220*a-6300*b])/1403;
 %
-%%% Step 5: Hunt-Pointer-Estevez response %%%
+%%% Step 5: Hunt-Pointer-Estevez response inversion %%%
 %
 tmp = (27.13 * abs(LMSp_a-0.1)) ./ (400-abs(LMSp_a-0.1));
 LMSp = sign(LMSp_a - 0.1) .* (100./prm.F_L) .* tmp.^(1/0.42);
 %
-%%% Step 6: cone responses considering luminance and surround %%%
+%%% Step 6: adapted cone responses considering luminance and surround %%%
 %
 LMS_C = LMSp * (prm.M_CAT02 / prm.M_HPE).';
 %
-%%% Step 7: cone responses %%%
+%%% Step 7: cone responses (undo chromatic adaptation) %%%
 %
 LMS = bsxfun(@rdivide,LMS_C,prm.LMS_c);
 %
