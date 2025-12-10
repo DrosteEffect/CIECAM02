@@ -5,7 +5,7 @@ function test_fun(out, fnh, varargin)
 %
 % * MATLAB R2009a or later.
 %
-% See also TEST_CAM02UCS TEST_CIECAM02
+% See also TEST_CAM02UCS TEST_CIECAM02 TEST_CAM16UCS TEST_CIECAM16
 tuo = fnh(varargin{:});
 %
 if isnumeric(out)
