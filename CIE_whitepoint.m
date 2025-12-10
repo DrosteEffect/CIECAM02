@@ -9,12 +9,13 @@ function XYZ = CIE_whitepoint(obs)
 %
 %   >> CIE_whitepoint('D65')
 %   ans =
-%        0.95047    1.0000    1.0888
+%        0.95047    1.00000    1.08883
 %
 %% Input Arguments %%
 %
 %   obs = StringScalar or CharRowVector, the name of the illuminant.
-%         Optional prefix specifies 2 or 10 degree, e.g. '2D50' or '10D50'.  
+%         Optional prefix specifies 2 or 10 degree, e.g. '2D50' or '10D50'.
+%       = Double/Single 1x3 vector of X Y Z values, scaled so Y==1.
 %
 %% Output Arguments %%
 %
@@ -22,10 +23,24 @@ function XYZ = CIE_whitepoint(obs)
 %
 %% Dependencies %%
 %
-% * MATLAB R2009a or later.
+% * MATLAB R2009b or later.
 %
 % See also CIECAM02_PARAMETERS CAM02UCS_PARAMETERS
 % CIEXYZ_TO_CIECAM02 CIECAM02_TO_CIEXYZ SRGB_TO_CAM02UCS CAM02UCS_TO_SRGB
+if isnumeric(obs)
+	assert(isfloat(obs)&&isreal(obs),...
+		'SC:CIE_whitepoint:wpt:NotRealFloat',...
+		'1st input <wpt> must be a real floating-point array.')
+	assert(numel(obs)==3,...
+		'SC:CIE_whitepoint:wpt:InvalidSize',...
+		'1st input <wpt> must be an [X,Y,Z] whitepoint.')
+	assert(obs(2)==1,...
+		'SC:CIE_whitepoint:wpt:OutOfRange_Y',...
+		'1st input <wpt> Y value must be exactly one.')
+	XYZ = reshape(obs,1,[]);
+	return
+end
+%
 switch upper(obs)
 	case 'ICC'
 		XYZ = [31595,32768,27030]/32768;

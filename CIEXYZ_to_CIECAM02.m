@@ -44,7 +44,7 @@ function out = CIEXYZ_to_CIECAM02(XYZ,prm,isn)
 %
 %% Dependencies %%
 %
-% * MATLAB R2009a or later.
+% * MATLAB R2009b or later.
 % * CIECAM02_parameters.m <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also CIECAM02_TO_CIEXYZ CIECAM02_TO_CAM02UCS CIEXYZ_TO_SRGB
@@ -80,26 +80,31 @@ assert(strcmp(prm.mfname,mfname),...
 %
 %%% Step 1: cone responses (CAT02) %%%
 %
-LMS = (100*XYZ) * prm.M_CAT02.';
+RGB = (100*XYZ) * prm.M_CAT02.';
 %
 %%% Step 2: chromatic adaptation (cone responses considering luminance and surround) %%%
 %
-LMS_C = bsxfun(@times, prm.LMS_c, LMS);
+RGB_C = bsxfun(@times, prm.RGB_c, RGB);
 %
 %%% Step 3: Hunt-Pointer-Estevez response %%%
 %
-LMSp = LMS_C * (prm.M_HPE / prm.M_CAT02).';
+RGBp = RGB_C * (prm.M_HPE / prm.M_CAT02).';
 %
 %%% Step 4: post-adaption cone response (nonlinear compression) %%%
 %
-LMSp_signs = sign(LMSp);
-tmp = (prm.F_L .* bsxfun(@times,LMSp_signs,LMSp)/100).^0.42;
-LMSp_a = 400*LMSp_signs .* (tmp ./ (tmp+27.13)) + 0.1;
+if prm.isns
+	tmp = ((prm.F_L.*abs(RGBp))./100).^0.42;
+	RGBp_a = 400 .* sign(RGBp) .* tmp ./ (tmp+27.13);
+else % CIE
+	RGBp_signs = sign(RGBp);
+	tmp = (prm.F_L .* bsxfun(@times,RGBp_signs,RGBp)/100).^0.42;
+	RGBp_a = 400 .* RGBp_signs .* tmp ./ (tmp+27.13) + 0.1;
+end
 %
 %%% Step 5: hue angle & opponent color dimensions a (red-green) & b (yellow-blue) %%%
 %
-a = LMSp_a * ([11;-12;1]/11);
-b = LMSp_a * ([1;1;-2]/9);
+a = RGBp_a*([11;-12;1]./11);
+b = RGBp_a*([1;1;-2]./9);
 h_rad = atan2(b,a);
 h = mod(180*h_rad/pi, 360);
 %
@@ -114,7 +119,11 @@ H = prm.H_i(idx) + (100*tmp) ./ (tmp + (prm.h_i(idx+1)-hp) ./ prm.e_i(idx+1));
 %
 %%% Step 7: achromatic response %%%
 %
-A = (LMSp_a*[2;1;1/20] - 0.305) .* prm.N_bb;
+if prm.isns
+	A = (RGBp_a*[2;1;1/20]) .* prm.N_bb;
+else % CIE
+	A = (RGBp_a*[2;1;1/20] - 0.305) .* prm.N_bb;
+end
 A(A<0) = 0 / ~(nargin<3 || isn);
 %
 %%% Step 8: correlate of lightness %%%
@@ -128,17 +137,26 @@ Q = (4./prm.c) .* sqrt(J/100) .* (prm.A_w+4) .* sqrt(sqrt(prm.F_L)); % brightnes
 %%% Step 10: correlates of chroma, colorfulness, and saturation %%%
 %
 e = (12500/13) .* prm.N_c .* prm.N_cb .* (cos(h_rad+2) + 3.8); % eccentricity factor
-tmp = (e .* sqrt(a.^2 + b.^2) ./ (LMSp_a*[1;1;21/20]));
+if prm.isns
+	tmp = e .* sqrt(a.^2 + b.^2) ./ (RGBp_a*[1;1;21/20]+0.305);
+else % CIE
+	tmp = e .* sqrt(a.^2 + b.^2) ./ (RGBp_a*[1;1;21/20]);
+end
 C = tmp.^0.9 .* sqrt(J/100) .* (1.64 - 0.29.^prm.n).^0.73; % chroma
 M = C .* sqrt(sqrt(prm.F_L)); % colorfulness
-s = 100*sqrt(M ./ Q); % saturation
+if prm.isns
+	s = 50 .* sqrt((C.*prm.c) ./ ((prm.A_w+4).*sqrt(J/100)));
+	s(J==0 | s==0) = 0; % saturation
+else % CIE
+	s = 100*sqrt(M ./ Q); % saturation
+end
 %
 out = struct('J',J,'Q',Q,'C',C,'M',M,'s',s,'H',H,'h',h);
 out = structfun(@(v)reshape(v,isz), out, 'UniformOutput',false);
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIEXYZ_to_CIECAM02
-% Copyright (c) 2017-2025 Stephen Cobeldick
+% Copyright (c) 2017-2026 Stephen Cobeldick
 %
 % Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 %

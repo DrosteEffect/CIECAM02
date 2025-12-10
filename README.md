@@ -3,19 +3,21 @@ CIECAM02 Color Appearance Model and CAM02 Uniform ColorSpace for MATLAB
 
 [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=DrosteEffect/CIECAM02)
 
-This code is based on two sources:
+This code is based on the following sources:
 
-1. the chapter "CIECAM02 and Its Recent Developments" by color
-   researchers Ming Ronnier Luo and Changjun Li, published in the book
-   "Advanced Color Image Processing and Analysis" on the 26th May 2012.
-2. the article "Uniform Colour Spaces Based on CIECAM02
-   Colour Appearance Model", by color researchers Ming Ronnier Luo,
-   Guihua Cui, and Changjun Li, from volume 31 issue 4 of the journal
-   "Color Research and Application", published on the 5th July 2006.
+1. the article "Algorithmic improvements for the CIECAM02 and CAM16 color
+   appearance models" by Nico Schlömer, revised on the 14th of October 2021.
+2. the chapter "CIECAM02 and Its Recent Developments" by Ming Ronnier Luo
+   and Changjun Li, in the book "Advanced Color Image Processing
+   and Analysis" published on the 26th of May 2012.
+3. the article "Uniform Colour Spaces Based on CIECAM02 Colour Appearance
+   Model", by Ming Ronnier Luo, Guihua Cui, and Changjun Li, from volume 31
+   issue 4 of the journal "Color Research and Application", published on
+   the 5th of July 2006.
 
-This MATLAB implementation does _**not**_ require the Image Processing Toolbox!
+This code does _**not**_ require the Image Processing Toolbox!
 
-This MATLAB implementation was inspired by the python module
+This code was inspired by the python module
 "colorspacious" written by Nathaniel J. Smith, available here:
 
 <https://github.com/njsmith/colorspacious>
@@ -29,9 +31,8 @@ for MatPlotLib 2 & MatPlotLib 3. These colormaps are also available for MATLAB h
 My goal was to provide functionality as simple as the commonly used CIELab
 colorspace conversions, whilst providing a much more perceptually uniform
 colorspace. Note that I replaced calculations with a matrix inverse, e.g.
-`inv(A)*b`, with the recommended and numerically more precise `A\b`:
-
-<https://www.mathworks.com/help/matlab/ref/inv.html>
+`inv(A)*b`, with the recommended and numerically more precise `\` or `/`,
+see: <https://www.mathworks.com/help/matlab/ref/inv.html>
 
 Quickstart Guide: As Easy As CIELAB!
 ------------------------------------

@@ -31,7 +31,7 @@ function XYZ = sRGB_to_CIEXYZ(rgb)
 %
 %% Dependencies %%
 %
-% * MATLAB R2009a or later.
+% * MATLAB R2009b or later.
 %
 % See also CIEXYZ_TO_SRGB SRGB_TO_CAM02UCS SRGB_TO_JZAZBZ SRGB_TO_OKLAB
 
@@ -84,7 +84,7 @@ out = inp / 12.92;
 out(idx) = real(((inp(idx) + 0.055) ./ 1.055) .^ 2.4);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sGammaInv
-% Copyright (c) 2017-2025 Stephen Cobeldick
+% Copyright (c) 2017-2026 Stephen Cobeldick
 %
 % Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 %

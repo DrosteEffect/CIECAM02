@@ -1,10 +1,11 @@
-function prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
+function prm = CIECAM02_parameters(wp,Y_b,L_A,sur,ins)
 % Parameter values defined in the CIECAM02 model "Step 0".
 %
 %%% Syntax %%%
 %
 %   prm = CIECAM02_parameters(wp,Y_b,L_A)
 %   prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
+%   prm = CIECAM02_parameters(...,ins)
 %
 %% Input Arguments (**==default) %%
 %
@@ -13,6 +14,8 @@ function prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
 %   L_A = NumericScalar, adapting field luminance (cd/m^2).
 %   sur = CharRowVector, one of 'dim'/'dark'/'average'**.
 %       = NumericVector, size 1x3, [F,c,N_c], CIECAM02 surround parameters.
+%   ins = true**, use Nico Schlömer's algorithmic improvements.
+%         false, use the original CIE algorithm.
 %
 %% Output Arguments %%
 %
@@ -20,7 +23,7 @@ function prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
 %
 %% Dependencies %%
 %
-% * MATLAB R2009a or later.
+% * MATLAB R2009b or later.
 %
 % See also CAM02UCS_PARAMETERS
 % CIEXYZ_TO_CIECAM02 CIECAM02_TO_CIEXYZ SRGB_TO_CAM02UCS CAM02UCS_TO_SRGB
@@ -28,8 +31,8 @@ function prm = CIECAM02_parameters(wp,Y_b,L_A,sur)
 %% Input Wrangling %%
 %
 assert(isnumeric(L_A)&&isscalar(L_A)&&isreal(L_A),...
-	'SC:CIECAM02_parameters:L_a:NotScalarNumeric',...
-	'3rd input <L_a> must be a real scalar numeric.')
+	'SC:CIECAM02_parameters:L_A:NotScalarNumeric',...
+	'3rd input <L_A> must be a real scalar numeric.')
 assert(isnumeric(Y_b)&&isscalar(Y_b)&&isreal(Y_b),...
 	'SC:CIECAM02_parameters:Y_b:NotScalarNumeric',...
 	'2nd input <Y_b> must be a real scalar numeric.')
@@ -47,7 +50,18 @@ L_A = double(L_A);
 %
 if nargin<4
 	sur = 'average';
+	ins = true;
+elseif nargin<5
+	if isequal(sur,0)||isequal(sur,1)
+		ins = logical(sur);
+		sur = 'average';
+	else
+		ins = true;
+	end
 end
+%
+prm.isns = ins;
+%
 if isnumeric(sur)
 	assert(isreal(sur)&&numel(sur)==3,...
 		'SC:CIECAM02_parameters:sur:NotThreeNumeric',...
@@ -88,30 +102,35 @@ prm.H_i = [0;100;200;300;400];
 %
 %% Derive Parameters %%
 %
-prm.LMS_w = prm.XYZ_w * prm.M_CAT02.';
+prm.RGB_w = prm.XYZ_w * prm.M_CAT02.';
 prm.D = prm.F .* (1-(1/3.6) .* exp(-(L_A+42)/92));
 prm.D = max(0,min(1,prm.D));
 %
-prm.LMS_c = prm.D*prm.XYZ_w(2) ./ prm.LMS_w + 1 - prm.D;
-prm.LMSp_w = (prm.LMS_c .* prm.LMS_w) * (prm.M_HPE / prm.M_CAT02).';
+prm.RGB_c = prm.D*prm.XYZ_w(2) ./ prm.RGB_w + 1 - prm.D;
+prm.RGBp_w = (prm.RGB_c .* prm.RGB_w) * (prm.M_HPE / prm.M_CAT02).';
 % Michaelis-Menten equation for the luminance level adaption factor:
 prm.k = 1 ./ (5*L_A+1);
-prm.F_L = (prm.k.^4 .* (5*L_A))/5 + ((1-prm.k^4).^2 .* (5*L_A).^(1/3))/10;
+prm.F_L = (prm.k.^4 .* (5*L_A))/5 + ((1-prm.k.^4).^2 .* (5*L_A).^(1/3))/10;
 %
 prm.n = Y_b ./ prm.XYZ_w(2);
 prm.z = 1.48 + sqrt(prm.n);
 prm.N_bb = 0.725 * prm.n.^(-1/5);
 prm.N_cb = prm.N_bb;
 %
-tmp = ((prm.F_L .* prm.LMSp_w)/100).^0.42;
-prm.LMSp_aw = 400*(tmp ./ (27.13 + tmp)) + 0.1;
-prm.A_w = (prm.LMSp_aw * [2;1;1/20] - 0.305) * prm.N_bb;
+tmp = ((prm.F_L .* prm.RGBp_w)/100).^0.42;
+if prm.isns
+	prm.RGBp_aw = 400*(tmp ./ (27.13 + tmp));
+	prm.A_w = (prm.RGBp_aw * [2;1;1/20]) * prm.N_bb;
+else % CIE
+	prm.RGBp_aw = 400*(tmp ./ (27.13 + tmp)) + 0.1;
+	prm.A_w = (prm.RGBp_aw * [2;1;1/20] - 0.305) * prm.N_bb;
+end
 %
 prm.mfname = mfilename();
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_parameters
-% Copyright (c) 2017-2025 Stephen Cobeldick
+% Copyright (c) 2017-2026 Stephen Cobeldick
 %
 % Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 %
