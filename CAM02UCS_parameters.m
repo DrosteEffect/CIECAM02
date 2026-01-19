@@ -47,7 +47,7 @@ switch nargin
 		prm.suffix = 'custom';
 	otherwise
 		error('SC:CAM02UCS_parameters:InvalidInputs',...
-			'Either one text input, or three numeric inputs are required.')
+			'Three numeric inputs or one text input is required.')
 end
 %
 prm.mfname = mfilename();

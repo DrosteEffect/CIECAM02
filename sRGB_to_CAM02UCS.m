@@ -5,8 +5,7 @@ function [Jab,csname,zyxlbl] = sRGB_to_CAM02UCS(rgb,isd,varargin)
 %
 %   Jab = sRGB_to_CAM02UCS(rgb)
 %   Jab = sRGB_to_CAM02UCS(rgb,isd)
-%   Jab = sRGB_to_CAM02UCS(rgb,isd,space)
-%   Jab = sRGB_to_CAM02UCS(rgb,isd,K_L,c1,c2)
+%   Jab = sRGB_to_CAM02UCS(rgb,isd,<opts>)
 %
 % If the output is being used for calculating the euclidean color distance
 % (i.e. deltaE) then specify isd=true, so that J' values are divided by K_L.
@@ -30,9 +29,7 @@ function [Jab,csname,zyxlbl] = sRGB_to_CAM02UCS(rgb,isd,varargin)
 %         Size Nx3 or RxCx3, the last dimension encodes the R,G,B values.
 %   isd = true    -> scale J' for euclidean distance calculations (divide by K_L)
 %       = false** -> return reference J' values (no scaling).
-%   space = StringScalar or CharRowVector, one of the following:
-%           'LCD'/'SCD'/'UCS'**, which selects a predefined CAM02 space
-%           LargeColorDifference / SmallColorDifference / UniformColorSpace.
+%   <opts> = all trailing inputs are passed to CAM02UCS_parameters.
 %
 %% Output Arguments %%
 %
