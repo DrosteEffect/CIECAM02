@@ -1,4 +1,4 @@
-function rgb = CIEXYZ_to_sRGB(XYZ)
+function [rgb,raw] = CIEXYZ_to_sRGB(XYZ)
 % Convert an array of CIE 1931 XYZ values to sRGB values.
 %
 %%% Syntax %%%
@@ -42,7 +42,7 @@ assert(isz(end)==3 || isequal(isz,[3,1]),...
 	'SC:CIEXYZ_to_sRGB:XYZ:InvalidSize',...
 	'1st input <XYZ> last dimension must have size 3 (e.g. Nx3 or RxCx3).')
 XYZ = reshape(XYZ,[],3);
-assert(all(XYZ(:,2)>=0&XYZ(:,2)<=1),...
+assert(all(-0.001<XYZ(:,2)&XYZ(:,2)<1.001),...
 	'SC:CIEXYZ_to_sRGB:XYZ:OutOfRangeY',...
 	'Input <XYZ> values must be scaled so 0<=Y<=1')
 %
@@ -61,8 +61,9 @@ M = [... IEC 61966-2-1:1999
 % 	0.2126729,0.7151522,0.0721750;...
 % 	0.0193339,0.1191920,0.9503041];
 %
-rgb = sGammaCor(XYZ / M.');
-rgb = max(0,min(1,reshape(rgb,isz)));
+raw = sGammaCor(XYZ / M.');
+raw = reshape(raw,isz);
+rgb = max(0,min(1,raw));
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIEXYZ_to_sRGB

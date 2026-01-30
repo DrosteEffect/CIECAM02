@@ -73,7 +73,7 @@ M = [... IEC 61966-2-1:1999, used for compatibility with other implementations.
 % 	0.0193339,0.1191920,0.9503041];
 %
 XYZ = sGammaInv(rgb) * M.';
-XYZ = max(0,min(1,reshape(XYZ,isz)));
+XYZ = reshape(XYZ,isz);
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sRGB_to_CIEXYZ

@@ -199,7 +199,7 @@ RGB = bsxfun(@rdivide,RGB_C,prm.RGB_c);
 %
 XYZ = RGB / prm.M_CAT02.';
 %
-XYZ = reshape(max(0,min(1,XYZ/100)),isz);
+XYZ = reshape(XYZ/100,isz);
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_to_CIEXYZ

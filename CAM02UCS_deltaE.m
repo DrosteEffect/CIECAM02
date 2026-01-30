@@ -39,8 +39,8 @@ function [dE,Jab1,Jab2] = CAM02UCS_deltaE(rgb1,rgb2,varargin)
 %          0<=rgb<=1, integer must be 0<=rgb<=intmax(class(rgb)).
 %          Size Nx3 or RxCx3, the last dimension encodes the R,G,B values.
 %   rgb2 = Numeric array of sRGB values, same format as <rgb1>. Note that
-%	       either <rgb1> or <rgb2> may consist of one color, which will be
-%	       implicitly expanded to match the colors of the other rgb array.
+%          either <rgb1> or <rgb2> may consist of one color, which will be
+%          implicitly expanded to match the colors of the other rgb array.
 %   coords = StringScalar or CharRowVector, either of the following:
 %          'Jab'** / 'JCh', which selects the CAM02 deltaE coordinates:
 %          Jab   cartesian coordinates: lightness - red/green - yellow/blue

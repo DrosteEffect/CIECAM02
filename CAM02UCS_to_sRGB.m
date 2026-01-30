@@ -1,4 +1,4 @@
-function rgb = CAM02UCS_to_sRGB(Jab,isd,varargin)
+function [rgb,raw] = CAM02UCS_to_sRGB(Jab,isd,varargin)
 % Convert an array of perceptually uniform CAM02 colorspace values to sRGB values.
 %
 %%% Syntax %%%
@@ -51,9 +51,10 @@ c02 = CAM02UCS_to_CIECAM02(Jab,one,nargin>1&&isd);
 wp  = CIE_whitepoint('D65');
 two = CIECAM02_parameters(wp,20,64/pi/5,'average');
 xyz = CIECAM02_to_CIEXYZ(c02,two);
-rgb = CIEXYZ_to_sRGB(xyz);
+[rgb,raw] = CIEXYZ_to_sRGB(xyz);
 %
 rgb = reshape(rgb,isz);
+raw = reshape(raw,isz);
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CAM02UCS_to_sRGB
