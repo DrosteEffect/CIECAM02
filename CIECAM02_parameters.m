@@ -19,7 +19,7 @@ function prm = CIECAM02_parameters(wp,Y_b,L_A,sur,ins)
 %
 %% Output Arguments %%
 %
-%   prm = Scalar structure of CIECAM02 parameter values.
+%   prm = ScalarStructure of CIECAM02 parameter values.
 %
 %% Dependencies %%
 %

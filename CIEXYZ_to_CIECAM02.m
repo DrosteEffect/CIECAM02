@@ -26,14 +26,14 @@ function out = CIEXYZ_to_CIECAM02(XYZ,prm,isn)
 %   XYZ = Double/single array of tristimulus values to convert. Values are
 %         defined by the CIE 1931 XYZ colorspace, scaled such that Ymax==1.
 %         Size Nx3 or RxCx3, the last dimension encodes the X,Y,Z values.
-%   prm = Scalar structure of parameters from CIECAM02_PARAMETERS.
+%   prm = ScalarStructure of parameters from CIECAM02_PARAMETERS.
 %   isn = false  -> negative A values are converted to zero.
 %       = true** -> negative A values are converted to NaN.
 %
 %% Output Arguments %%
 %
-%   out = a scalar structure with numeric fields of size Nx1 or RxCx1, with
-%         CIECAM02 values (calculated from <XYZ> and the input parameters):
+%   out = ScalarStructure with fields of size Nx1 or RxCx1.
+%         The fields have the class of <XYZ>. The fields encode:
 %         J = Lightness
 %         Q = Brightness
 %         C = Chroma
@@ -62,11 +62,12 @@ assert(isreal(XYZ),...
 assert(isz(end)==3 || isequal(isz,[3,1]),...
 	'SC:CIEXYZ_to_CIECAM02:XYZ:InvalidSize',...
 	'1st input <XYZ> last dimension must have size 3 (e.g. Nx3 or RxCx3).')
+isz(find(isz==3,1,'last')) = 1;
+%
 XYZ = reshape(XYZ,[],3);
 assert(all(-0.001<XYZ(:,2)&XYZ(:,2)<1.001),...
 	'SC:CIEXYZ_to_CIECAM02:XYZ:OutOfRangeY',...
 	'Input <XYZ> values must be scaled so 0<=Y<=1')
-isz(end) = 1;
 %
 mfname = 'CIECAM02_parameters';
 assert(isstruct(prm)&&isscalar(prm),...

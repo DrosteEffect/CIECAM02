@@ -13,7 +13,7 @@ function XYZ = CIE_whitepoint(obs)
 %
 %% Input Arguments %%
 %
-%   obs = StringScalar or CharRowVector, the name of the illuminant.
+%   obs = StringScalar or CharRowVector name of the illuminant, e.g. 'D65'.
 %         Optional prefix specifies 2 or 10 degree, e.g. '2D50' or '10D50'.
 %       = Double/Single 1x3 vector of X Y Z values, scaled so Y==1.
 %

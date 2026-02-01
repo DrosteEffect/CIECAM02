@@ -21,10 +21,10 @@ function XYZ = CIECAM02_to_CIEXYZ(inp,prm)
 %
 %% Input Arguments %%
 %
-%   inp = Scalar structure of the CIECAM02 values, with one field from each
-%         of these three groups: [J|Q], [C|M|s], and [H|h]. Each field must
-%         have exactly the same size Nx1 or RxCx1. The fields must be
-%         all double or all single. The fields encode:
+%   inp = ScalarStructure of the CIECAM02 values, with one field from
+%         each of these three groups: [J|Q], [C|M|s], and [H|h].
+%         The fields must have exactly the same size Nx1 or RxCx1.
+%         The fields must be all double or all single. The fields encode:
 %         J = Lightness
 %         Q = Brightness
 %         C = Chroma
@@ -32,7 +32,7 @@ function XYZ = CIECAM02_to_CIEXYZ(inp,prm)
 %         s = Saturation
 %         H = Hue Composition
 %         h = Hue Angle
-%   prm = Scalar structure of parameters from CIECAM02_PARAMETERS.
+%   prm = ScalarStructure of parameters from CIECAM02_PARAMETERS.
 %
 %% Output Arguments %%
 %

@@ -1,4 +1,4 @@
-function test_fun(out, fnh, varargin)
+function test_fun(exp, fnh, varargin)
 % Support function for comparing function output against expected output.
 %
 %% Dependencies %%
@@ -6,35 +6,37 @@ function test_fun(out, fnh, varargin)
 % * MATLAB R2009b or later.
 %
 % See also TEST_CAM02UCS TEST_CIECAM02 TEST_CAM16UCS TEST_CIECAM16
-tuo = fnh(varargin{:});
+act = fnh(varargin{:});
 %
-if isnumeric(out)
-	inm = inputname(1);
-elseif isstruct(out)
-	fld = fieldnames(out);
-	inm = [fld{:}];
-	out = structfun(@(n)n,out);
-	tuo = structfun(@(n)n,orderfields(tuo,fld));
+if isnumeric(exp)
+	inm = double(inputname(1));
+elseif isstruct(exp)
+	fld = fieldnames(exp);
+	inm = double([fld{:}]);
+	exp = structfun(@(n)n,exp); % scalar struct only!
+	act = structfun(@(n)n,orderfields(act,fld));
 else
-	error('Output class "%s" is not supported',class(out))
+	error('Output class "%s" is not supported.',class(exp))
 end
+assert(numel(inm)==numel(exp),'Only single-character field/column names.')
+assert(numel(act)==numel(exp),'Actual and expected must be same length.')
 %
-out = reshape(out,1,[]);
-tuo = reshape(tuo,1,[]);
+exp = reshape(double(exp),1,[]);
+act = reshape(double(act),1,[]);
 %
 dbs = dbstack(1);
-sgf = min(ceil(-log10(abs(out-tuo)./max(abs(out),abs(tuo)))));
+sgf = min(ceil(-log10(abs(exp-act)./max(abs(exp),abs(act)))));
 %
 if feature('hotlinks')
 	fm0 = '<a href="matlab:opentoline(''%1$s'',%2$d)">@%3$s  line:%2$d</a>';
 else
 	fm0 = '@%3$s  line:%2$d';
 end
-str = sprintf(fm0,dbs(1).file,dbs(1).line,func2str(fnh));
+str = sprintf(fm0, dbs(1).file, dbs(1).line, func2str(fnh));
 fm1 = '  \x394sgf:%2d  ';
 fm2 = ' %+#.15g(%c)';
-fprintf(str);fprintf(2,fm1,sgf);fprintf('expect:%s\n',sprintf(fm2,[out;+inm]))
-fprintf(str);fprintf(2,fm1,sgf);fprintf('output:%s\n',sprintf(fm2,[tuo;+inm]))
+fprintf(str); fprintf(2,fm1,sgf); fprintf('expect:%s\n',sprintf(fm2,[exp;inm]))
+fprintf(str); fprintf(2,fm1,sgf); fprintf('actual:%s\n',sprintf(fm2,[act;inm]))
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%test_fun

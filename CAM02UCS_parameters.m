@@ -18,7 +18,7 @@ function prm = CAM02UCS_parameters(K_L,c1,c2)
 %
 %% Output Arguments %%
 %
-%   prm = Scalar structure of CAM02 colorspace parameter values.
+%   prm = ScalarStructure of CAM02 colorspace parameter values.
 %
 %% Dependencies %%
 %

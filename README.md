@@ -5,15 +5,15 @@ CIECAM02 Color Appearance Model and CAM02 Uniform ColorSpace for MATLAB
 
 This code is based on the following sources:
 
-1. the article "Algorithmic improvements for the CIECAM02 and CAM16 color
-   appearance models" by Nico Schlömer, revised on the 14th of October 2021.
-2. the chapter "CIECAM02 and Its Recent Developments" by Ming Ronnier Luo
+1. the chapter "CIECAM02 and Its Recent Developments" by Ming Ronnier Luo
    and Changjun Li, in the book "Advanced Color Image Processing
    and Analysis" published on the 26th of May 2012.
-3. the article "Uniform Colour Spaces Based on CIECAM02 Colour Appearance
+2. the article "Uniform Colour Spaces Based on CIECAM02 Colour Appearance
    Model", by Ming Ronnier Luo, Guihua Cui, and Changjun Li, from volume 31
    issue 4 of the journal "Color Research and Application", published on
    the 5th of July 2006.
+3. the article "Algorithmic improvements for the CIECAM02 and CAM16 color
+   appearance models" by Nico Schlömer, revised on the 14th of October 2021.
 
 This code does _**not**_ require the Image Processing Toolbox!
 

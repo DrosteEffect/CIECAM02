@@ -119,7 +119,7 @@ test_fun(XYZ, @CIECAM02_to_CIEXYZ, mkStruct(Q,M,H), prm)
 test_fun(XYZ, @CIECAM02_to_CIEXYZ, mkStruct(J,s,H), prm)
 test_fun(XYZ, @CIECAM02_to_CIEXYZ, mkStruct(Q,s,H), prm)
 %
-% <https://colour.readthedocs.io/en/latest/generated/colour.CIECAM16_to_XYZ.html>
+% <https://colour.readthedocs.io/en/latest/generated/colour.CIECAM20_to_XYZ.html>
 J=41.731091132513917; C=0.104707757171031; h=219.048432658311780;
 %
 test_fun(XYZ, @CIECAM02_to_CIEXYZ, mkStruct(J,C,h), prm)
