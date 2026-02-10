@@ -53,14 +53,18 @@ if nargin<4
 	ins = true;
 elseif nargin<5
 	if isequal(sur,0)||isequal(sur,1)
-		ins = logical(sur);
+		ins = sur;
 		sur = 'average';
 	else
 		ins = true;
 	end
 end
 %
-prm.isns = ins;
+assert(isequal(ins,0)||isequal(ins,1),...
+	'SC:CIECAM02_parameters:ins:NotTrueNorFalse',...
+	'Trailing input <ins> must be true/false.')
+%
+prm.isns = logical(ins);
 %
 if isnumeric(sur)
 	assert(isreal(sur)&&numel(sur)==3,...
