@@ -11,13 +11,13 @@ function [Jab,suffix] = CIECAM02_to_CAM02UCS(inp,prm,isd)
 %
 %% Example %%
 %
-%   >> inp.J = 43.7296094671109756;
-%   >> inp.M = 52.4958873764575245;
-%   >> inp.h = 256.695342232470466;
+%   >> inp.J =  43.7296094671110;
+%   >> inp.M =  52.4958873764575;
+%   >> inp.h = 256.695342232471;
 %   >> prm = CAM02UCS_parameters();
 %   >> Jab = CIECAM02_to_CAM02UCS(inp,prm)
 %   Jab =
-%      56.917   -7.9440  -33.593
+%         56.917    -7.944    -33.593
 %
 %% Input Arguments (**==default) %%
 %

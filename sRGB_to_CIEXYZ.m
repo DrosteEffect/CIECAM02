@@ -7,15 +7,13 @@ function XYZ = sRGB_to_CIEXYZ(rgb)
 %
 %% Examples %%
 %
-%   >> rgb = [64,128,255]/255;
-%   >> XYZ = sRGB_to_CIEXYZ(rgb)
+%   >> XYZ = sRGB_to_CIEXYZ([64,128,255]/255)
 %   XYZ =
-%        0.27884    0.23748    0.97722
+%         0.27884    0.23748    0.97722
 %
-%   >> rgb = uint8([64,128,255]);
-%   >> XYZ = sRGB_to_CIEXYZ(rgb)
+%   >> XYZ = sRGB_to_CIEXYZ(uint8([64,128,255]))
 %   XYZ =
-%        0.27884    0.23748    0.97722
+%         0.27884    0.23748    0.97722
 %
 %% Input Arguments %%
 %

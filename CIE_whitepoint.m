@@ -9,7 +9,7 @@ function XYZ = CIE_whitepoint(obs)
 %
 %   >> CIE_whitepoint('D65')
 %   ans =
-%        0.95047    1.00000    1.08883
+%         0.95047    1.00000    1.08883
 %
 %% Input Arguments %%
 %

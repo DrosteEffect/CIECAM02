@@ -11,13 +11,14 @@ function out = CAM02UCS_to_CIECAM02(Jab,prm,isd)
 %
 %% Example %%
 %
-%   >> Jab = [56.9174814457648495,-7.94398845807383758,-33.5932377101949626];
+%   >> Jab = sRGB_to_CAM02UCS([64,128,255]/255)
+%   Jab = [56.9174814457648,-7.94398845807377,-33.593237710195]
 %   >> prm = CAM02UCS_parameters();
 %   >> out = CAM02UCS_to_CIECAM02(Jab,prm)
 %   out =
-%       J:  43.730
-%       M:  52.496
-%       h: 256.70
+%         J:  43.730
+%         M:  52.496
+%         h: 256.70
 %
 %% Input Arguments (**==default) %%
 %
