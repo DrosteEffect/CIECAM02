@@ -42,6 +42,7 @@ just as easily as they might use `rgb2lab` and `lab2rgb`. This conversion
 is easy with these convenience functions (i.e. `rgb2jab` and `jab2rgb`):
 
     Jab = sRGB_to_CAM02UCS(rgb)
+
     rgb = CAM02UCS_to_sRGB(Jab)
 
 These use default values that are appropriate for sRGB (D65 illuminant, etc),
@@ -56,14 +57,17 @@ While most users will likely want to convert between sRGB and CAM02
 colorspaces, the main functions provide the following conversions:
 
     CIEXYZ_to_CIECAM02()
+
     CIECAM02_to_CIEXYZ()
 
     CIECAM02_to_CAM02UCS()
+
     CAM02UCS_to_CIECAM02()
 
 And for convenience in MATLAB (note that `XYZ` is scaled so `Ymax==1`):
 
     sRGB_to_CIEXYZ()
+
     CIEXYZ_to_sRGB()
 
 Test Scripts
@@ -72,5 +76,10 @@ Test Scripts
 Of course there is no point in writing a conversion this complex without
 testing it thoroughly: test functions check the conversion between CIEXYZ
 and CIECAM02 and CAM02 J'a'b'. The test values are those referenced in the
-Python libraries "colorspacious" and "colour-science".
+Python libraries "colorspacious" and "colour-science":
+
+<https://pypi.org/project/colorspacious/>
+
+<https://pypi.org/project/colour-science/>
+
 The test functions are included in this repository.
