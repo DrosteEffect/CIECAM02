@@ -10,7 +10,7 @@ function prm = CIECAM02_parameters(wp,Y_b,L_A,sur,ins)
 %% Input Arguments (**==default) %%
 %
 %   wp  = NumericVector, whitepoint XYZ values [Xw,Yw,Zw], 1931 XYZ colorspace (Ymax==1).
-%   Y_b = NumericScalar, relative luminance factor of the background.
+%   Y_b = NumericScalar, relative luminance factor of the background (Ymax=100).
 %   L_A = NumericScalar, adapting field luminance (cd/m^2).
 %   sur = CharRowVector, one of 'dim'/'dark'/'average'**.
 %       = NumericVector, size 1x3, [F,c,N_c], CIECAM02 surround parameters.

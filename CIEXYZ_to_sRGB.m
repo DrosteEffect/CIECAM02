@@ -69,7 +69,7 @@ rgb = max(0,min(1,raw));
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIEXYZ_to_sRGB
 function out = sGammaCor(inp)
-% Gamma correction of sRGB data.
+% Gamma correction: Nx3 linear RGB -> Nx3 sRGB.
 idx = inp > 0.0031308;
 out = 12.92 * inp;
 out(idx) = real(1.055 * inp(idx) .^ (1./2.4) - 0.055);
