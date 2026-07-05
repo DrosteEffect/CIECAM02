@@ -1,10 +1,11 @@
-function [dE,Jab1,Jab2] = CAM02UCS_deltaE(rgb1,rgb2,varargin)
+function [dE,Jab1,Jab2,name] = CAM02UCS_deltaE(rgb1,rgb2,varargin)
 % Calculate perceptual color difference (deltaE) between sRGB colors using CAM02-UCS.
 %
 %%% Syntax %%%
 %
 %   dE = CAM02UCS_deltaE(rgb1,rgb2)
-%   dE = CAM02UCS_deltaE(rgb1,rgb2,coords)
+%   dE = CAM02UCS_deltaE(rgb1,rgb2,...,coords)
+%   dE = CAM02UCS_deltaE(rgb1,rgb2,...,output)
 %   dE = CAM02UCS_deltaE(rgb1,rgb2,...,<opts>)
 %   [dE,Jab1,Jab2] = CAM02UCS_deltaE(...)
 %
@@ -28,10 +29,10 @@ function [dE,Jab1,Jab2] = CAM02UCS_deltaE(rgb1,rgb2,varargin)
 %        25.7346
 %        30.6617
 %
-%   >> dE = CAM02UCS_deltaE(rgb1,rgb2,'Jab','LCD')
+%   >> dE = CAM02UCS_deltaE(rgb1,rgb2,'Jab','LCD','Huang')
 %   dE =
-%        34.1038
-%        39.8976
+%        20.0855
+%        22.9512
 %
 %% Input Arguments (**==default) %%
 %
@@ -45,11 +46,17 @@ function [dE,Jab1,Jab2] = CAM02UCS_deltaE(rgb1,rgb2,varargin)
 %          'Jab'** / 'JCh', which selects the CAM02 deltaE coordinates:
 %          Jab   cartesian coordinates: lightness - red/green - yellow/blue
 %          JCh cylindrical coordinates: lightness - chroma - hue angle
-%   <opts> = all trailing inputs are passed to CAM02UCS_parameters.
+%   output = StringScalar or CharRowVector, either of the following:
+%          'Euclid'** / 'Huang', which select the output transform:
+%          Euclid: no power transform, dE is euclidean in CAM02 colorspace.
+%          Huang: applies the appropriate power transform. See Huang M,
+%          Cui G, Melgosa M, et al. "Power functions improving the
+%          performance of color-difference formulas", Optics Express, 2015.
+%   <opts> = all remaining inputs are passed to CAM02UCS_parameters.
 %
 %% Output Arguments %%
 %
-%   dE = Column vector of Euclidean color differences in CAM02-UCS space.
+%   dE = Column vector of color differences in CAM02-UCS space.
 %        Size Nx1, where N is the max number of colors in <rgb1> or <rgb2>.
 %   Jab1 = Numeric Nx3 matrix of the <rgb1> colors in CAM02 colorspace.
 %   Jab2 = Numeric Nx3 matrix of the <rgb2> colors in CAM02 colorspace.
@@ -63,22 +70,26 @@ function [dE,Jab1,Jab2] = CAM02UCS_deltaE(rgb1,rgb2,varargin)
 
 %% Input Wrangling %%
 %
+ddE = 'EUCLID'; % default deltaE
 dcs = 'JAB'; % default coordinates
-for k = 1:numel(varargin)
+for k = numel(varargin):-1:1
 	try %#ok<TRYNC>
 		tmp = upper(varargin{k});
 		switch tmp
 			case {'JAB','JCH'}
 				varargin(k) = [];
 				dcs = tmp;
+			case {'EUCLID','HUANG'}
+				varargin(k) = [];
+				ddE = tmp;
 		end
 	end
 end
 %
 % Convert to CAM02-UCS with isd=true for deltaE calculations.
 % The conversion function performs input checking on the sRGB.
-Jab1 = sRGB_to_CAM02UCS(rgb1,true,varargin{:});
-Jab2 = sRGB_to_CAM02UCS(rgb2,true,varargin{:});
+[Jab1,  ~] = sRGB_to_CAM02UCS(rgb1,true,varargin{:});
+[Jab2,csn] = sRGB_to_CAM02UCS(rgb2,true,varargin{:});
 %
 % Reshape to Nx3
 Jab1 = reshape(Jab1,[],3);
@@ -99,22 +110,38 @@ switch dcs
 	case 'JAB'
 		% Already in J'a'b' format - use bsxfun for compatibility
 		diff = bsxfun(@minus, Jab1, Jab2);
-		dE = sqrt(sum(diff.^2, 2));
+		dE = hypot(hypot(diff(:,1),diff(:,2)),diff(:,3));
 	case 'JCH'
 		% Convert to J'C'h
 		J1 = Jab1(:,1); a1 = Jab1(:,2); b1 = Jab1(:,3);
 		J2 = Jab2(:,1); a2 = Jab2(:,2); b2 = Jab2(:,3);
-		C1 = sqrt(a1.^2 + b1.^2);
-		C2 = sqrt(a2.^2 + b2.^2);
+		C1 = hypot(a1,b1);
+		C2 = hypot(a2,b2);
 		h1 = atan2(b1,a1);
 		h2 = atan2(b2,a2);
 		dh = bsxfun(@minus, h1, h2);
 		dh = mod(dh+pi,2*pi)-pi;
 		dH = 2*sqrt(bsxfun(@times, C1, C2)).*sin(dh/2);
-		dE = sqrt(...
-			bsxfun(@minus, J1, J2).^2 + ...
-			bsxfun(@minus, C1, C2).^2 + dH.^2);
+		dE = hypot(hypot(...
+			bsxfun(@minus, J1, J2),...
+			bsxfun(@minus, C1, C2)), dH);
 end
+%
+if strcmpi(ddE,'HUANG')
+	switch csn
+		case 'CAM02LCD'
+			dE = 1.00 .* dE.^0.85;
+		case 'CAM02SCD'
+			dE = 1.45 .* dE.^0.75;
+		case 'CAM02UCS'
+			dE = 1.30 .* dE.^0.75;
+		otherwise
+			error('SC:CAM02UCS_deltaE:NoPowerTransform',...
+				'The Huang power transform is only defined for LCD, SCD, and UCS. Specify option "Euclid" instead.')
+	end
+end
+%
+name = strcat(csn,'_d',dcs,'_',ddE);
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CAM02UCS_deltaE

@@ -56,12 +56,12 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CAM02UCS_parameters
 function prm = GetParam(K_L)
 switch upper(K_L)
-	case 'UCS'
-		prm.K_L=1.00; prm.c1=0.007; prm.c2=0.0228; prm.suffix='UCS';
 	case 'LCD'
 		prm.K_L=0.77; prm.c1=0.007; prm.c2=0.0053; prm.suffix='LCD';
 	case 'SCD'
 		prm.K_L=1.24; prm.c1=0.007; prm.c2=0.0363; prm.suffix='SCD';
+	case 'UCS'
+		prm.K_L=1.00; prm.c1=0.007; prm.c2=0.0228; prm.suffix='UCS';
 	otherwise
 		error('SC:CAM02UCS_parameters:UnknownColorspace',...
 			'The requested colorspace "%s" is not supported.',K_L)

@@ -140,9 +140,9 @@ Q = (4./prm.c) .* sqrt(J/100) .* (prm.A_w+4) .* sqrt(sqrt(prm.F_L)); % brightnes
 %
 e = (12500/13) .* prm.N_c .* prm.N_cb .* (cos(h_rad+2) + 3.8); % eccentricity factor
 if prm.isns
-	tmp = e .* sqrt(a.^2 + b.^2) ./ (RGBp_a*[1;1;21/20]+0.305);
+	tmp = e .* hypot(a,b) ./ (RGBp_a*[1;1;21/20]+0.305);
 else % CIE
-	tmp = e .* sqrt(a.^2 + b.^2) ./ (RGBp_a*[1;1;21/20]);
+	tmp = e .* hypot(a,b) ./ (RGBp_a*[1;1;21/20]);
 end
 C = tmp.^0.9 .* sqrt(J/100) .* (1.64 - 0.29.^prm.n).^0.73; % chroma
 M = C .* sqrt(sqrt(prm.F_L)); % colorfulness
