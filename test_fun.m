@@ -1,4 +1,4 @@
-function test_fun(exp, fnh, varargin)
+function test_fun(xpa, fnh, varargin)
 % Support function for comparing function output against expected output.
 %
 %% Dependencies %%
@@ -6,26 +6,28 @@ function test_fun(exp, fnh, varargin)
 % * MATLAB R2009b or later.
 %
 % See also TEST_CAM02UCS TEST_CIECAM02 TEST_CAM16UCS TEST_CIECAM16
-act = fnh(varargin{:});
+opa = fnh(varargin{:});
 %
-if isnumeric(exp)
+if isnumeric(xpa)
 	inm = double(inputname(1));
-elseif isstruct(exp)
-	fld = fieldnames(exp);
+elseif isstruct(xpa)
+	fld = fieldnames(xpa);
 	inm = double([fld{:}]);
-	exp = structfun(@(n)n,exp); % scalar struct only!
-	act = structfun(@(n)n,orderfields(act,fld));
+	xpa = structfun(@(n)n,xpa); % scalar struct only!
+	opa = structfun(@(n)n,orderfields(opa,fld));
 else
-	error('Output class "%s" is not supported.',class(exp))
+	error('Output class "%s" is not supported.',class(xpa))
 end
-assert(numel(inm)==numel(exp),'Only single-character field/column names.')
-assert(numel(act)==numel(exp),'Actual and expected must be same length.')
+assert(numel(inm)==numel(xpa),'Only single-character field/column names.')
+assert(numel(opa)==numel(xpa),'Actual and expected must be same length.')
 %
-exp = reshape(double(exp),1,[]);
-act = reshape(double(act),1,[]);
+xpa = reshape(double(xpa),1,[]);
+opa = reshape(double(opa),1,[]);
 %
 dbs = dbstack(1);
-sgf = min(ceil(-log10(abs(exp-act)./max(abs(exp),abs(act)))));
+err = abs(xpa(:)-opa(:));
+scf = max(1,max(abs(xpa(:)),abs(opa(:))));
+dgt = min(-log10(err./scf));
 %
 if feature('hotlinks')
 	fm0 = '<a href="matlab:opentoline(''%1$s'',%2$d)">@%3$s  line:%2$d</a>';
@@ -33,10 +35,10 @@ else
 	fm0 = '@%3$s  line:%2$d';
 end
 str = sprintf(fm0, dbs(1).file, dbs(1).line, func2str(fnh));
-fm1 = '  \x394sgf:%2d  ';
+fm1 = ' \x394:%3.2g ';
 fm2 = ' %+#.15g(%c)';
-fprintf(str); fprintf(2,fm1,sgf); fprintf('expect:%s\n',sprintf(fm2,[exp;inm]))
-fprintf(str); fprintf(2,fm1,sgf); fprintf('actual:%s\n',sprintf(fm2,[act;inm]))
+fprintf(str); fprintf(2,fm1,dgt); fprintf('expect:%s\n',sprintf(fm2,[xpa;inm]))
+fprintf(str); fprintf(2,fm1,dgt); fprintf('actual:%s\n',sprintf(fm2,[opa;inm]))
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%test_fun

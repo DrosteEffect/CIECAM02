@@ -15,24 +15,24 @@ function [dE,Jab1,Jab2,name] = CAM02UCS_deltaE(rgb1,rgb2,varargin)
 %   >> rgb2 = [128,64,200]/255;
 %   >> dE = CAM02UCS_deltaE(rgb1,rgb2)
 %   dE =
-%        25.7346
+%        25.7333
 %
 %   >> rgb1 = uint8([64,128,255; 100,150,200]);
 %   >> rgb2 = uint8([128,64,200]);
 %   >> dE = CAM02UCS_deltaE(rgb1,rgb2)
 %   dE =
-%        25.7346
-%        30.6617
+%        25.7333
+%        30.6607
 %
 %   >> dE = CAM02UCS_deltaE(rgb1,rgb2,'JCh')
 %   dE =
-%        25.7346
-%        30.6617
+%        25.7333
+%        30.6607
 %
 %   >> dE = CAM02UCS_deltaE(rgb1,rgb2,'Jab','LCD','Huang')
 %   dE =
-%        20.0855
-%        22.9512
+%        20.0846
+%        22.9503
 %
 %% Input Arguments (**==default) %%
 %

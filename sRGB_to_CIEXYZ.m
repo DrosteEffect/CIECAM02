@@ -1,25 +1,29 @@
-function XYZ = sRGB_to_CIEXYZ(rgb)
+function XYZ = sRGB_to_CIEXYZ(rgb,M)
 % Convert an array of sRGB values to CIE 1931 XYZ values.
 %
 %%% Syntax %%%
 %
 %   XYZ = sRGB_to_CIEXYZ(rgb)
+%   XYZ = sRGB_to_CIEXYZ(rgb,M)
 %
 %% Examples %%
 %
 %   >> XYZ = sRGB_to_CIEXYZ([64,128,255]/255)
 %   XYZ =
-%         0.27884    0.23748    0.97722
+%         0.2788    0.2375    0.9773
 %
 %   >> XYZ = sRGB_to_CIEXYZ(uint8([64,128,255]))
 %   XYZ =
-%         0.27884    0.23748    0.97722
+%         0.2788    0.2375    0.9773
 %
 %% Input Arguments %%
 %
 %   rgb = Numeric array of sRGB values to convert. Floating point values
 %         must be 0<=rgb<=1, integer must be 0<=rgb<=intmax(class(rgb)).
 %         Size Nx3 or RxCx3, the last dimension encodes the R,G,B values.
+%     M = Numeric array of size 3x3, a matrix of sRGB->XYZ conversion.
+%       = StringScalar/CharVector of a supported sRGB->XYZ conversion,
+%         see get_sRGB_matrix.m for a list of the supported conversions.
 %
 %% Output Arguments %%
 %
@@ -30,8 +34,9 @@ function XYZ = sRGB_to_CIEXYZ(rgb)
 %% Dependencies %%
 %
 % * MATLAB R2009b or later.
+% * get_sRGB_matrix.m from <https://github.com/DrosteEffect/CIECAM02>
 %
-% See also CIEXYZ_TO_SRGB SRGB_TO_CAM02UCS SRGB_TO_JZAZBZ SRGB_TO_OKLAB
+% See also CIEXYZ_TO_SRGB GET_SRGB_MATRIX SRGB_TO_CAM02UCS SRGB_TO_OKLAB
 
 %% Input Wrangling %%
 %
@@ -55,20 +60,13 @@ rgb = reshape(rgb,[],3);
 assert(all(0<=rgb(:)&rgb(:)<=1),'SC:sRGB_to_CIEXYZ:rgb:OutOfRange',...
 	'1st input <rgb> values must be 0<=rgb<=%d',mxv)
 %
-%% RGB2XYZ %%
+if nargin<2 || isequal(M,[])
+	M = get_sRGB_matrix();
+else
+	M = get_sRGB_matrix(M); % this does input checking!
+end
 %
-M = [... IEC 61966-2-1:1999, used for compatibility with other implementations.
-	0.4124,0.3576,0.1805;...
-	0.2126,0.7152,0.0722;...
-	0.0193,0.1192,0.9505];
-% M = [... Derived from ITU-R BT.709-6
-%    0.412390799265959,0.357584339383878,0.180480788401834;...
-%    0.212639005871510,0.715168678767756,0.072192315360734;...
-%    0.019330818715592,0.119194779794626,0.950532152249661];
-% M = [... <http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html>
-% 	0.4124564,0.3575761,0.1804375;...
-% 	0.2126729,0.7151522,0.0721750;...
-% 	0.0193339,0.1191920,0.9503041];
+%% RGB2XYZ %%
 %
 XYZ = sGammaInv(rgb) * M.';
 XYZ = reshape(XYZ,isz);

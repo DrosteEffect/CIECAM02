@@ -14,11 +14,11 @@ function [Jab,csname,zyxlbl] = sRGB_to_CAM02UCS(rgb,isd,varargin)
 %
 %   >> Jab = sRGB_to_CAM02UCS([64,128,255]/255)
 %   Jab =
-%         56.917    -7.9440    -33.593
+%         56.9150    -7.9471    -33.5918
 %
 %   >> Jab = sRGB_to_CAM02UCS(uint8([64,128,255]))
 %   Jab =
-%         56.917    -7.9440    -33.593
+%         56.9150    -7.9471    -33.5918
 %
 %% Input Arguments (**==default) %%
 %
@@ -37,12 +37,12 @@ function [Jab,csname,zyxlbl] = sRGB_to_CAM02UCS(rgb,isd,varargin)
 %% Dependencies %%
 %
 % * MATLAB R2009b or later.
-% * CIE_whitepoint.m, CIECAM02_parameters.m, CIEXYZ_to_CIECAM02.m,
+% * get_whitepoint.m, CIECAM02_parameters.m, CIEXYZ_to_CIECAM02.m,
 %   sRGB_to_CIEXYZ.m, CAM02UCS_parameters.m, and CIECAM02_to_CAM02UCS.m
 %   all from <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also CAM02UCS_TO_SRGB CAM02UCS_PARAMETERS CIECAM02_PARAMETERS
-% CIE_WHITEPOINT CAM02UCS_TO_CIECAM02 SRGB_TO_CIEXYZ MAXDISTCOLOR
+% GET_WHITEPOINT CAM02UCS_TO_CIECAM02 SRGB_TO_CIEXYZ MAXDISTCOLOR
 
 %% Input Wrangling %%
 %
@@ -50,11 +50,10 @@ isz = size(rgb);
 %
 %% RGB2Jab %%
 %
-wp  = CIE_whitepoint('D65');
-two = CIECAM02_parameters(wp,20,64/pi/5,'average');
-c02 = CIEXYZ_to_CIECAM02(sRGB_to_CIEXYZ(rgb),two);
+two = CIECAM02_parameters(get_whitepoint(),20,64/pi/5,'average');
+cam = CIEXYZ_to_CIECAM02(sRGB_to_CIEXYZ(rgb),two);
 one = CAM02UCS_parameters(varargin{:});
-Jab = CIECAM02_to_CAM02UCS(c02,one,nargin>1&&isd);
+Jab = CIECAM02_to_CAM02UCS(cam,one,nargin>1&&isd);
 %
 Jab = reshape(Jab,isz);
 %

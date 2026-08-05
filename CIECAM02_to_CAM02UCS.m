@@ -11,13 +11,13 @@ function [Jab,suffix] = CIECAM02_to_CAM02UCS(inp,prm,isd)
 %
 %% Example %%
 %
-%   >> inp.J =  43.7296094671110;
-%   >> inp.M =  52.4958873764575;
-%   >> inp.h = 256.695342232471;
+%   >> inp.J =  43.7277388693672;
+%   >> inp.M =  52.4998429392094;
+%   >> inp.h = 256.688651428706;
 %   >> prm = CAM02UCS_parameters();
 %   >> Jab = CIECAM02_to_CAM02UCS(inp,prm)
 %   Jab =
-%         56.917    -7.944    -33.593
+%         56.9150    -7.9471    -33.5918
 %
 %% Input Arguments (**==default) %%
 %
@@ -39,7 +39,7 @@ function [Jab,suffix] = CIECAM02_to_CAM02UCS(inp,prm,isd)
 %% Dependencies %%
 %
 % * MATLAB R2009b or later.
-% * CAM02UCS_parameters.m <https://github.com/DrosteEffect/CIECAM02>
+% * CAM02UCS_parameters.m from <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also CAM02UCS_TO_CIECAM02 CAM02UCS_PARAMETERS
 % CIECAM02_TO_CIEXYZ CAM02UCS_TO_SRGB

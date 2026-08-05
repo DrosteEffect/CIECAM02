@@ -7,17 +7,17 @@ function XYZ = CIECAM02_to_CIEXYZ(inp,prm)
 %
 %% Example %%
 %
-%   >> inp.J =  43.7296094671110;
-%   >> inp.M =  52.4958873764575;
-%   >> inp.h = 256.695342232471;
-%   >> wp  = CIE_whitepoint('D65');
+%   >> inp.J =  43.7270750548562;
+%   >> inp.M =  52.4943741265099;
+%   >> inp.h = 256.689769911537;
+%   >> wp  = get_whitepoint();
 %   >> prm = CIECAM02_parameters(wp,20,64/pi/5,'average');
 %   >> XYZ = CIECAM02_to_CIEXYZ(inp,prm)
 %   XYZ =
-%         0.27884    0.23748    0.97722
+%         0.2788    0.2375    0.9773
 %   >> rgb = CIEXYZ_to_sRGB(XYZ)*255
 %   rgb =
-%         64.000     128.00     255.00
+%         64     128     255
 %
 %% Input Arguments %%
 %
@@ -43,7 +43,7 @@ function XYZ = CIECAM02_to_CIEXYZ(inp,prm)
 %% Dependencies %%
 %
 % * MATLAB R2009b or later.
-% * CIECAM02_parameters.m <https://github.com/DrosteEffect/CIECAM02>
+% * CIECAM02_parameters.m from <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also CIEXYZ_TO_CIECAM02 CIEXYZ_TO_SRGB CIECAM02_TO_CAM02UCS
 % CIECAM02_PARAMETERS

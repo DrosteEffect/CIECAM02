@@ -1,4 +1,4 @@
-function [rgb,raw,xyz] = CAM02UCS_to_sRGB(Jab,isd,varargin)
+function [rgb,raw,XYZ] = CAM02UCS_to_sRGB(Jab,isd,varargin)
 % Convert an array of perceptually uniform CAM02 colorspace values to sRGB values.
 %
 %%% Syntax %%%
@@ -13,10 +13,10 @@ function [rgb,raw,xyz] = CAM02UCS_to_sRGB(Jab,isd,varargin)
 %% Example %%
 %
 %   >> Jab = sRGB_to_CAM02UCS([64,128,255]/255)
-%   Jab = [56.9174814457648,-7.94398845807377,-33.593237710195]
+%   Jab = [56.9150, -7.9471, -33.5918]
 %   >> rgb = CAM02UCS_to_sRGB(Jab)*255
 %   rgb =
-%         64.000    128.00    255.00
+%         64    128    255
 %
 %% Input Arguments (**==default) %%
 %
@@ -34,12 +34,12 @@ function [rgb,raw,xyz] = CAM02UCS_to_sRGB(Jab,isd,varargin)
 %% Dependencies %%
 %
 % * MATLAB R2009b or later.
-% * CAM02UCS_parameters.m, CAM02UCS_to_CIECAM02.m, CIE_whitepoint.m,
+% * CAM02UCS_parameters.m, CAM02UCS_to_CIECAM02.m, get_whitepoint.m,
 %   CIECAM02_parameters.m, CIECAM02_to_CIEXYZ.m, and CIEXYZ_to_sRGB.m 
 %   all from <https://github.com/DrosteEffect/CIECAM02>
 %
 % See also SRGB_TO_CAM02UCS CAM02UCS_PARAMETERS CIECAM02_PARAMETERS
-% CIE_WHITEPOINT CAM02UCS_TO_CIECAM02 SRGB_TO_CIEXYZ MAXDISTCOLOR
+% GET_WHITEPOINT CAM02UCS_TO_CIECAM02 SRGB_TO_CIEXYZ MAXDISTCOLOR
 
 %% Input Wrangling %%
 %
@@ -48,11 +48,10 @@ isz = size(Jab);
 %% Jab2RGB %%
 %
 one = CAM02UCS_parameters(varargin{:});
-c02 = CAM02UCS_to_CIECAM02(Jab,one,nargin>1&&isd);
-wp  = CIE_whitepoint('D65');
-two = CIECAM02_parameters(wp,20,64/pi/5,'average');
-xyz = reshape(CIECAM02_to_CIEXYZ(c02,two),isz);
-[rgb,raw] = CIEXYZ_to_sRGB(xyz);
+cam = CAM02UCS_to_CIECAM02(Jab,one,nargin>1&&isd);
+two = CIECAM02_parameters(get_whitepoint(),20,64/pi/5,'average');
+XYZ = reshape(CIECAM02_to_CIEXYZ(cam,two),isz);
+[rgb,raw] = CIEXYZ_to_sRGB(XYZ);
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CAM02UCS_to_sRGB
