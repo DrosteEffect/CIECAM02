@@ -9,7 +9,7 @@ function [rgb,raw] = CIEXYZ_to_sRGB(XYZ,M)
 %% Example %%
 %
 %   >> XYZ = sRGB_to_CIEXYZ([64,128,255]./255)
-%   XYZ = [0.2788, 0.2375, 0.9773]
+%   XYZ = [0.2788,0.2375,0.9773]
 %   >> rgb = CIEXYZ_to_sRGB(XYZ)*255
 %   rgb =
 %         64    128    255
@@ -69,7 +69,7 @@ end
 function out = sGammaCor(inp)
 % Gamma correction: Nx3 linear RGB -> Nx3 sRGB.
 idx = inp > 0.0031308;
-out = 12.92 * inp;
+out = inp .* 12.92;
 out(idx) = real(1.055 * inp(idx) .^ (1./2.4) - 0.055);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sGammaCor

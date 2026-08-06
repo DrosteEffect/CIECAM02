@@ -9,7 +9,7 @@ function out = CIEXYZ_to_CIECAM02(XYZ,prm,isn)
 %% Example %%
 %
 %   >> XYZ = sRGB_to_CIEXYZ([64,128,255]./255)
-%   XYZ = [0.2788, 0.2375, 0.9773]
+%   XYZ = [0.2788,0.2375,0.9773]
 %   >> wp  = get_whitepoint();
 %   >> prm = CIECAM02_parameters(wp,20,64/pi/5,'average');
 %   >> out = CIEXYZ_to_CIECAM02(XYZ,prm)
@@ -108,7 +108,7 @@ end
 a = RGBp_a*([11;-12;1]./11);
 b = RGBp_a*([1;1;-2]./9);
 h_rad = atan2(b,a);
-h = mod(180*h_rad/pi, 360);
+h = mod(180*h_rad./pi, 360);
 %
 %%% Step 6: hue composition (using unique hue data) %%%
 %
@@ -122,11 +122,11 @@ H = prm.H_i(idx) + (100*tmp) ./ (tmp + (prm.h_i(idx+1)-hp) ./ prm.e_i(idx+1));
 %%% Step 7: achromatic response %%%
 %
 if prm.isns
-	A = (RGBp_a*[2;1;1/20]) .* prm.N_bb;
+	A = (RGBp_a*[2;1;1./20]) .* prm.N_bb;
 else % CIE
-	A = (RGBp_a*[2;1;1/20] - 0.305) .* prm.N_bb;
+	A = (RGBp_a*[2;1;1./20] - 0.305) .* prm.N_bb;
 end
-A(A<0) = 0 / ~(nargin<3 || isn);
+A(A<0) = 0 ./ ~(nargin<3 || isn);
 %
 %%% Step 8: correlate of lightness %%%
 %

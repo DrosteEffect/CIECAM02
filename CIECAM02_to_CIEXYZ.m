@@ -102,7 +102,7 @@ elseif isfield(inp,'s')
 	if isfield(inp,'J')
 		Q = (4./prm.c) .* sqrt(J/100) .* (prm.A_w+4) .* sqrt(sqrt(prm.F_L));
 	end
-	C = (inp.s(:) / 100).^2 * (Q ./ sqrt(sqrt(prm.F_L)));
+	C = (inp.s(:)./100).^2 * (Q ./ sqrt(sqrt(prm.F_L)));
 else
 	error('SC:CIECAM02_to_CIEXYZ:inp:MissingField_C_M_s',...
 		'Input <inp> must contain the field "C" or "M" or "s".')
@@ -130,7 +130,7 @@ end
 %%% Step 2: determine t & e_t & A %%%
 %
 t  = (C ./ (sqrt(J./100) .* (1.64 - 0.29.^prm.n).^0.73)) .^ (1/0.9);
-et = (cos(pi*h/180+2)+3.8) / 4; % eccentricity factor
+et = (cos(pi*h/180+2)+3.8)./4; % eccentricity factor
 A  = prm.A_w .* (J./100) .^ (1./(prm.c*prm.z)); % achromatic response
 if prm.isns
 	p1 = (50000/13 * prm.N_c * prm.N_cb) * et;
@@ -199,7 +199,7 @@ RGB = bsxfun(@rdivide,RGB_C,prm.RGB_c);
 %
 XYZ = RGB / prm.M_CAT02.';
 %
-XYZ = reshape(XYZ/100,isz);
+XYZ = reshape(XYZ./100,isz);
 %
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CIECAM02_to_CIEXYZ

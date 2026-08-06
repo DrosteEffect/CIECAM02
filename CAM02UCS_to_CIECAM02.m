@@ -83,7 +83,7 @@ J  = -Jp ./ (prm.c1 * Jp - 100*prm.c1 -1);
 h  = myAtan2d(bp,ap);
 Mp = hypot(ap,bp);
 %
-M  = (exp(prm.c2*Mp) - 1) / prm.c2;
+M  = (exp(prm.c2*Mp) - 1) ./ prm.c2;
 %
 out = struct('J',J,'M',M,'h',h);
 out = structfun(@(v)reshape(v,isz), out, 'UniformOutput',false);
@@ -92,7 +92,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CAM02UCS_to_CIECAM02
 function ang = myAtan2d(Y,X)
 % ATAN2 with an output in degrees. Note: ATAN2D only introduced R2012b.
-ang = mod(360*atan2(Y,X)/(2*pi),360);
+ang = mod(360*atan2(Y,X)./(2*pi),360);
 ang(Y==0 & X==0) = 0;
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%myAtan2d

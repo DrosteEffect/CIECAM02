@@ -76,7 +76,7 @@ end
 function out = sGammaInv(inp)
 % Inverse gamma correction: Nx3 sRGB -> Nx3 linear RGB.
 idx = inp > 0.04045;
-out = inp / 12.92;
+out = inp ./ 12.92;
 out(idx) = real(((inp(idx) + 0.055) ./ 1.055) .^ 2.4);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%sGammaInv

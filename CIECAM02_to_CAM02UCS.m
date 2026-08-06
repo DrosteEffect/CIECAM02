@@ -93,10 +93,10 @@ assert(strcmp(prm.mfname,mfname),...
 Jp = (1 + 100*prm.c1) .* J ./ (1 + prm.c1*J);
 %
 if nargin>2&&isd
-	Jp = Jp / prm.K_L;
+	Jp = Jp ./ prm.K_L;
 end
 %
-Mp = (1 / prm.c2) * log(1 + prm.c2 * M);
+Mp = (1 ./ prm.c2) * log(1 + prm.c2 * M);
 ap = Mp .* cosd(h);
 bp = Mp .* sind(h);
 %
