@@ -31,8 +31,9 @@ function [Jab,csname,zyxlbl] = sRGB_to_CAM02UCS(rgb,isd,varargin)
 %
 %% Output Arguments %%
 %
-%   Jab = Array of CAM02 colorspace values J'a'b'. The same
-%         class & size as <rgb>, the last dimension encodes the J',a',b' values.
+%   Jab = Array of CAM02 colorspace values J'a'b'. The same size as <rgb>,
+%         the last dimension encodes the J',a',b' values. Has class single
+%         iff <rgb> is single, otherwise it has class double.
 %
 %% Dependencies %%
 %
